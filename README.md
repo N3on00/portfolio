@@ -6,6 +6,7 @@ This folder is a filtered, portfolio-focused source pack based on the projects i
 
 - Modular portfolio foundation: `docs/architecture.md`
 - Runtime decision and integration shape: `docs/runtime-integration.md`
+- Final integration notes: `docs/integration-decisions.md`
 - Shared app layer: `src/app/TODO.md`
 - Shared contracts and tokens: `src/shared/TODO.md`
 - Interactive mode workstream: `src/features/interactive/TODO.md`
