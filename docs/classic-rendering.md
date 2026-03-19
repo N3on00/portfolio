@@ -3,9 +3,9 @@
 ## Existing shared foundation
 
 - `src/shared/content/portfolio-content.ts` is now the single portfolio knowledge base.
-- `src/shared/types/portfolio.ts` separates sections, actors, and mode mappings.
-- `content.mappings.classic` defines order and renderer intent for the classic mode.
-- `content.mappings.interactive` keeps the same actor catalog available to the interactive mode.
+- `src/shared/types/portfolio.ts` defines typed entities, relations, and mode mappings.
+- `content.modeMappings` defines the classic and interactive traversal roots.
+- `src/shared/actors` provides the shared actor and resolver system used for both modes.
 
 ## Considered approaches
 
@@ -23,9 +23,9 @@
 
 ### 3. Shared actors + mode mappings + renderer blocks
 
-- Shared actors hold the canonical content.
-- Shared mode mappings decide which actors appear in which mode surface and in what order.
-- Classic mode converts those mappings into generic render blocks and then renders them.
+- Shared entities and relations hold the canonical content graph.
+- Shared mode mappings decide which surfaces traverse which parts of that graph.
+- Mode-specific section actors bind the classic surfaces to generic render blocks and then to HTML.
 - Good: high reuse, low duplication, clear extension path, and clean separation between content, mapping, and presentation.
 - Weak: slightly more setup than per-section adapters.
 
@@ -34,22 +34,25 @@
 Approach 3 is the best fit.
 
 - Reuse: the actor catalog can feed both classic and interactive mode.
-- Duplication: projects, references, skills, and profile copy exist once.
+- Duplication: projects, references, skills, and profile copy exist once in the shared entity graph.
 - Extendability: new section order or renderer variants only require mapping or renderer changes.
 - Separation: shared content stays mode-agnostic while classic rendering stays presentation-focused.
 
 ## Implemented flow
 
-1. `portfolioContent` defines `sections`, `actors`, and per-mode `mappings`.
-2. `createClassicRenderDocument` in `src/features/classic/classic-rendering-flow.ts` resolves actor ids into generic render blocks.
-3. `renderClassicDocument` in `src/features/classic/classic-renderer.ts` turns those blocks into reduced monochrome HTML.
-4. `src/features/classic/classic-mode.runtime.ts` exposes a ready-to-render classic document and HTML output.
+1. `portfolioContent` defines shared `entities`, `relations`, and `modeMappings`.
+2. `classicSectionRegistry` in `src/features/classic/classic-sections.ts` defines section order, labels, and surface bindings.
+3. `classicSectionActors` in `src/features/classic/classic-section-actors.ts` bind those sections into the shared actor system.
+4. `createClassicRenderDocument` in `src/features/classic/classic-render-flow.ts` resolves shared surfaces into generic render blocks.
+5. `renderClassicDocument` in `src/features/classic/classic-renderer.ts` turns those blocks into reduced monochrome HTML.
 
 ## Resulting module split
 
 - `src/shared/*`: data model, content, and shared tokens
-- `src/features/classic/classic-rendering.types.ts`: classic document and block contracts
-- `src/features/classic/classic-rendering-flow.ts`: mapping layer from shared data to classic render model
+- `src/features/classic/classic-sections.ts`: section registry and ordering
+- `src/features/classic/classic-section-actors.ts`: classic actor bindings onto shared mappings
+- `src/features/classic/classic-rendering-types.ts`: classic document and block contracts
+- `src/features/classic/classic-render-flow.ts`: mapping layer from shared graph to classic render model
 - `src/features/classic/classic-renderer.ts`: presentation-only HTML renderer
 
 ## Notes

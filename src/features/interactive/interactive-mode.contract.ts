@@ -5,31 +5,41 @@ export const interactiveModeDefinition: ModeDefinition = {
   label: "Interactive Mode",
   routeBase: "/interactive",
   ownership: {
-    primary: ["scene", "room-navigation", "actor-surfaces", "overlay-orchestration"],
-    sharedDependencies: ["portfolio-content", "actor-system", "ui-tokens", "app-shell"],
+    primary: ["scene", "room-navigation", "project-hotspots", "pc-overlay"],
+    sharedDependencies: ["portfolio-content", "shared-ui", "app-shell"],
   },
   extensionPoints: [
     "2d-scene-renderer",
-    "actor-registry-bindings",
-    "actor-interaction-adapters",
+    "object-interactions",
+    "project-detail-popups",
     "room-audio-and-ambience",
   ],
   contentMappingId: "interactive-shared-foundation",
   checklist: [
     {
-      id: "interactive-scene-resolution",
-      label: "Resolved scene model is available without coupling shell logic to the renderer.",
+      id: "interactive-react-adapter",
+      label: "React runtime adapter stays mounted through the shared registry.",
       status: "done",
     },
     {
-      id: "interactive-progression",
-      label: "Phases, triggers, and interaction targets are available as runtime-ready feature state.",
+      id: "interactive-actor-registry",
+      label: "Actor registry seam exists before renderer-specific visuals.",
       status: "done",
     },
     {
-      id: "interactive-overlay-seam",
-      label: "Overlay content is derived from shared content links instead of hardcoded object copy.",
+      id: "interactive-shared-ui-shells",
+      label: "Shared UI shells cover panels, triggers, dialogs and hints without owning scene behavior.",
       status: "done",
+    },
+    {
+      id: "interactive-renderer-adapter",
+      label: "Connect the resolved scene model to the final renderer adapter.",
+      status: "todo",
+    },
+    {
+      id: "interactive-project-overlays",
+      label: "Build project overlay presentation on top of the shared shells without coupling it to the renderer.",
+      status: "todo",
     },
   ],
 };

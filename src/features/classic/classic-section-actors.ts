@@ -1,6 +1,6 @@
 import { createActorRegistry } from "@shared/actors";
 import type { ActorDefinition } from "@shared/actors";
-import { classicSectionRegistry } from "./sections/section-registry";
+import { classicSectionRegistry } from "./classic-sections";
 
 export const classicSectionActors: ActorDefinition[] = classicSectionRegistry.map((section) => ({
   id: section.actorId,
