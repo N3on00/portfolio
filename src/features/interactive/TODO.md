@@ -17,7 +17,7 @@
 - Done: keyboard-accessible fallback actions and modal overlays now sit on top of the shared UI shells
 - Done: actor runtime state and scene progression are now synchronized through a dedicated interactive runtime session
 - Done: actor reactions now choose between modal, panel, and inline presentation without leaking that routing into the shell
-- Next: refine dedicated visuals per reaction target while keeping the reaction contract generic
+- Done: reaction targets now receive dedicated presentation variants without introducing actor-specific hardcoding
 
 ## Guardrails
 
