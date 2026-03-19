@@ -180,6 +180,10 @@ select {
   background: rgba(255, 255, 255, 0.72);
 }
 
+.interactive-room__detail-surface {
+  margin-top: var(--space-md, 1rem);
+}
+
 .classic-react-section {
   background: rgba(255, 255, 255, 0.82);
 }

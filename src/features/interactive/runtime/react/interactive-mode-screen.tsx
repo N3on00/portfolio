@@ -90,6 +90,11 @@ export function InteractiveModeScreen() {
   const currentPhase = toCurrentPhase(snapshot.resolvedScene, snapshot.progress.currentPhaseId);
   const selectedActor = snapshot.resolvedScene.actors.find((actor) => actor.id === selectedActorId);
   const overlay = selectedActor ? getSceneOverlayContent(snapshot.resolvedScene, selectedActor.id) : undefined;
+  const selectedActorState = selectedActor ? snapshot.actorState[selectedActor.actor.id] : undefined;
+  const selectedAction = selectedActorState?.lastActionId
+    ? selectedActor?.resolvedActor.actions.find((action) => action.id === selectedActorState.lastActionId)
+    : undefined;
+  const selectedReaction = selectedAction?.reaction;
 
   const handleTargetActivate = (target: SceneInteractionTarget) => {
     const actor = snapshot.resolvedScene.actors.find((entry) => entry.id === target.actorId);
@@ -251,9 +256,9 @@ export function InteractiveModeScreen() {
         </Stack>
       </Stack>
 
-      {selectedActor && overlay ? (
+      {selectedActor && overlay && selectedReaction?.type === "overlay" ? (
         <ModalShell
-          eyebrow={selectedActor.actor.type}
+          eyebrow={`${selectedActor.actor.type} - ${selectedReaction.target}`}
           title={overlay.headline}
           footer={<ActionTrigger onClick={() => setSelectedActorId(undefined)}>Close</ActionTrigger>}
         >
@@ -280,6 +285,44 @@ export function InteractiveModeScreen() {
             ))}
           </Stack>
         </ModalShell>
+      ) : null}
+
+      {selectedActor && overlay && selectedReaction && selectedReaction.type !== "overlay" ? (
+        <div className="interactive-room__detail-surface">
+          {selectedReaction.type === "panel" ? (
+            <Panel as="aside" padding="md" tone="strong">
+              <Stack gap="sm">
+                <Eyebrow>{selectedReaction.target}</Eyebrow>
+                <Heading as="h3" size="card">
+                  {overlay.headline}
+                </Heading>
+                <Text tone="muted">{selectedAction?.intent}</Text>
+                <Stack gap="sm">
+                  {overlay.cards.map((card) => (
+                    <Panel key={card.id} as="article" padding="sm">
+                      <Stack gap="xs">
+                        <Eyebrow>{card.eyebrow}</Eyebrow>
+                        <Heading as="h4" size="card">
+                          {card.title}
+                        </Heading>
+                        <Text>{card.body}</Text>
+                      </Stack>
+                    </Panel>
+                  ))}
+                </Stack>
+                <ActionTrigger onClick={() => setSelectedActorId(undefined)}>Close panel</ActionTrigger>
+              </Stack>
+            </Panel>
+          ) : (
+            <HintShell label={selectedReaction.target}>
+              <Text>{selectedAction?.intent}</Text>
+              {overlay.cards[0] ? <Text tone="muted">{overlay.cards[0].body}</Text> : null}
+              <ActionTrigger variant="ghost" onClick={() => setSelectedActorId(undefined)}>
+                Dismiss
+              </ActionTrigger>
+            </HintShell>
+          )}
+        </div>
       ) : null}
     </Surface>
   );

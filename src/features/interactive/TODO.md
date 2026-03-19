@@ -16,7 +16,8 @@
 - Done: renderer adapter now turns scene phases, hotspots, and actor actions into a playable React room surface
 - Done: keyboard-accessible fallback actions and modal overlays now sit on top of the shared UI shells
 - Done: actor runtime state and scene progression are now synchronized through a dedicated interactive runtime session
-- Next: map actor reactions to dedicated overlay/panel renderers instead of the current generic modal fallback
+- Done: actor reactions now choose between modal, panel, and inline presentation without leaking that routing into the shell
+- Next: refine dedicated visuals per reaction target while keeping the reaction contract generic
 
 ## Guardrails
 
