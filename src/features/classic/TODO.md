@@ -16,6 +16,7 @@
 - Done: React screen now renders the shared classic document instead of a separate status-only placeholder
 - Done: final section ordering and scan priority now live in the classic section registry instead of ad hoc screen layout
 - Done: React and HTML classic renderers now share block presentation metadata instead of drifting independently
+- Done: the normal portfolio view now has a clearer recruiter-first review path and stronger content hierarchy
 
 ## Guardrails
 

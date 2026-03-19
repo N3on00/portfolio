@@ -226,6 +226,32 @@ select {
   background: rgba(255, 255, 255, 0.82);
 }
 
+.classic-hero-card {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(138, 106, 47, 0.14), transparent 36%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(240, 234, 223, 0.94) 100%);
+}
+
+.classic-summary-card {
+  min-height: 100%;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.classic-summary-step {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  gap: var(--space-sm, 0.5rem);
+  align-items: start;
+  padding-top: var(--space-xs, 0.25rem);
+  border-top: 1px solid var(--color-border, #d8d2c8);
+}
+
+.classic-summary-step:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
 .classic-react-facts {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
@@ -261,6 +287,11 @@ select {
 .classic-react-block {
   display: grid;
   gap: var(--space-xs, 0.25rem);
+}
+
+.classic-react-block.is-grid .ui-grid,
+.classic-react-block.is-groups .ui-grid {
+  align-items: stretch;
 }
 
 @keyframes interactive-pulse {
