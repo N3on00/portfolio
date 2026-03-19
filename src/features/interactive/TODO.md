@@ -8,16 +8,10 @@
 
 ## Parallel work suggestions
 
-- Done: React runtime adapter exists without moving scene concerns into the shell
-- Done: actor registry seam exists for registration-driven scene extension
-- Done: shared panel, dialog, hint, and typography shells exist without taking ownership of scene logic
-- Done: scene resolver and runtime screen now read shared mappings and actor-linked content together
-- Done: interactive actor links were realigned to valid shared collections instead of feature-local shadow data
-- Done: renderer adapter now turns scene phases, hotspots, and actor actions into a playable React room surface
-- Done: keyboard-accessible fallback actions and modal overlays now sit on top of the shared UI shells
-- Done: actor runtime state and scene progression are now synchronized through a dedicated interactive runtime session
-- Done: actor reactions now choose between modal, panel, and inline presentation without leaking that routing into the shell
-- Done: reaction targets now receive dedicated presentation variants without introducing actor-specific hardcoding
+- Done: the route now explains the future room mode explicitly instead of pretending a toy implementation is already the final value
+- Done: the room concept is constrained by a feature spec focused on project evidence, architecture context, and process clarity
+- Next: decide whether Phaser actually improves delivery enough to justify the additional runtime complexity
+- Next: implement the room only once the final object list and guided flow are fixed around real portfolio value
 
 ## Guardrails
 

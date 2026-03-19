@@ -4,14 +4,19 @@ This repository contains the source code for `portfolio.pegger.dev`.
 
 It is a Vite + React portfolio with two presentation modes built on one shared content graph:
 
-- `interactive`: a room-based portfolio experience with actor-driven hotspots, scene progression, and contextual reactions
-- `classic`: a reduced scan-first portfolio view rendered from the same shared document model
+- `interactive`: currently a detailed concept page for a future room-based experience with real portfolio value
+- `classic`: the production-ready direct portfolio view rendered from the shared document model
 
 ## Live
 
 - Production: `https://portfolio.pegger.dev`
 
 ## Core idea
+
+The homepage deliberately asks the visitor how they want to enter the portfolio:
+
+- direct portfolio view
+- future room concept
 
 The repository is structured so content, behavior, rendering, routing, and infrastructure stay separate:
 
@@ -61,6 +66,7 @@ Further details live in:
 - `docs/architecture.md`
 - `docs/integration-decisions.md`
 - `docs/deployment.md`
+- `docs/interactive-experience-spec.md`
 
 ## Development
 
