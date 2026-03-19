@@ -6,9 +6,11 @@
 - Keep the classic React screen on top of the same `ClassicRenderDocument` used for HTML output so classic mode has one document model and multiple render adapters.
 - Keep classic scan order declarative in the section registry so section priority changes do not require renderer rewrites.
 - Keep renderer-specific classic styling thin by sharing block presentation metadata across HTML and React adapters.
+- Keep `/` as an explicit mode-choice entrypoint so the normal portfolio remains the primary path and the interactive room stays opt-in.
 - Keep interactive actor registrations mode-local, but realign their linked content to valid shared collections instead of ad hoc local ids.
 - Keep the interactive React adapter renderer-thin: it reduces scene progression and renders hotspots, but the scene contract remains the source of timing, placement, and content linkage.
 - Keep actor state mutable only inside a dedicated runtime session so React screens consume snapshots instead of owning cross-actor progression rules.
 - Keep reaction routing declarative on actor actions; the React adapter decides only how to present `overlay`, `panel`, or `inline`, not which actor gets special treatment.
 - Keep reaction target styling in a small runtime presentation registry so target-specific visuals stay additive and do not leak back into actor or scene contracts.
+- Keep the current interactive route as a concept/spec surface until the room can prove value beyond novelty.
 - Prefer targeted fixes over broad rewrites: type seams, stale exports, and duplicate classic files were corrected without moving domain ownership across layers.

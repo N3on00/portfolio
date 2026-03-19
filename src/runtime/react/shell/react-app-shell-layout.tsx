@@ -25,6 +25,7 @@ const shellStyle = designTokenCssVariables as CSSProperties;
 
 export function ReactAppShellLayout({ route, children }: ReactAppShellLayoutProps) {
   const navigationRoutes = appShell.routes.filter((candidate) => candidate.id !== "home");
+  const isHomeRoute = route.id === "home";
 
   return (
     <div className="app-shell" style={shellStyle}>
@@ -35,7 +36,11 @@ export function ReactAppShellLayout({ route, children }: ReactAppShellLayoutProp
             <Heading as="h1" size="hero">
               {appShell.appName}
             </Heading>
-            <Text tone="muted">Shared shell, tokens and primitives stay mode-agnostic.</Text>
+            <Text tone="muted">
+              {isHomeRoute
+                ? "Choose the direct portfolio or preview the planned interactive room before going deeper."
+                : "A modular portfolio built on shared content, mode-specific features, and thin runtime adapters."}
+            </Text>
           </Stack>
 
           <nav aria-label="Mode switcher">
@@ -55,9 +60,11 @@ export function ReactAppShellLayout({ route, children }: ReactAppShellLayoutProp
 
         <main className="shell-main">
           <Stack gap="md">
-            <HintShell className="route-note" label="Current route">
-              <Text>{route.path}</Text>
-            </HintShell>
+            {!isHomeRoute ? (
+              <HintShell className="route-note" label="Current route">
+                <Text>{route.path}</Text>
+              </HintShell>
+            ) : null}
             <Panel as="section" padding="md">
               {children}
             </Panel>

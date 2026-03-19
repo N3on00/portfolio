@@ -60,6 +60,25 @@ select {
   width: fit-content;
 }
 
+.entry-option {
+  min-height: 100%;
+}
+
+.entry-option--classic {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(240, 234, 223, 0.92) 100%);
+}
+
+.entry-option--interactive {
+  background: linear-gradient(180deg, rgba(240, 234, 223, 0.92) 0%, rgba(227, 218, 201, 0.9) 100%);
+}
+
+.interactive-concept-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: var(--space-xs, 0.25rem);
+}
+
 .interactive-room {
   position: relative;
   overflow: hidden;

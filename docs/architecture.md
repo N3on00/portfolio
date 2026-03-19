@@ -4,8 +4,8 @@
 
 This repository implements one portfolio application with two distinct modes on top of shared content and shared contracts:
 
-- `interactive`: a room-based experience with actor-driven interactions, scene progression, and contextual reactions
-- `classic`: a reduced scan-first portfolio view rendered from the same shared content graph
+- `interactive`: a specified future room-based experience that should only ship once it adds real explanatory value
+- `classic`: the direct scan-first portfolio view rendered from the same shared content graph
 
 The architecture is designed so new content, scenes, sections, and presentation variants can be added without rewriting the app shell.
 
@@ -94,9 +94,9 @@ Classic mode uses the same model for section-oriented content binding.
 
 ## Routes
 
-- `/` -> interactive mode
-- `/interactive` -> interactive mode
-- `/classic` -> classic mode
+- `/` -> deliberate entry choice between direct portfolio and room concept
+- `/interactive` -> interactive concept/specification page for the future room mode
+- `/classic` -> direct portfolio page
 
 ## Extension strategy
 
@@ -122,3 +122,4 @@ Classic mode uses the same model for section-oriented content binding.
 - `docs/runtime-integration.md`
 - `docs/integration-decisions.md`
 - `docs/deployment.md`
+- `docs/interactive-experience-spec.md`

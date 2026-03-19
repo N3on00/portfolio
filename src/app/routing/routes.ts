@@ -7,8 +7,8 @@ export const appRoutes: AppRouteDefinition[] = [
   {
     id: routeIds.home,
     path: "/",
-    mode: "interactive",
-    entryModule: "@features/interactive",
+    mode: "classic",
+    entryModule: "@app/home",
     status: "ready-for-shell",
   },
   {

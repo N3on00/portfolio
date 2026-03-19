@@ -27,7 +27,7 @@ export function ReactAppRouter() {
           />
         );
       })}
-      <Route path="*" element={<Navigate replace to={`/${appShell.defaultMode}`} />} />
+      <Route path="*" element={<Navigate replace to="/" />} />
     </Routes>
   );
 }
