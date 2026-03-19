@@ -104,6 +104,10 @@ const buildBlocks = (
 
 const createHeroBlocks = (root: PortfolioRootEntity, entities: ContentEntity[]): ClassicRenderBlock[] => {
   const experience = entities.find((entity): entity is ExperienceEntity => entity.kind === "experience");
+  const highlightedProjects = entities
+    .filter((entity): entity is ProjectEntity => entity.kind === "project")
+    .slice(0, 3)
+    .map((project) => project.title);
 
   const facts: ClassicFactListBlock = {
     type: "fact-list",
@@ -119,7 +123,11 @@ const createHeroBlocks = (root: PortfolioRootEntity, entities: ContentEntity[]):
     facts,
     {
       type: "bullet-list",
-      items: [root.payload.headline, ...(experience?.payload.focusAreas ?? [])],
+      items: [
+        root.payload.headline,
+        ...(experience?.payload.focusAreas ?? []),
+        ...(highlightedProjects.length ? [`Recent proof: ${highlightedProjects.join(", ")}`] : []),
+      ],
     },
     {
       type: "link-list",
@@ -135,8 +143,16 @@ const createAboutBlocks = (root: PortfolioRootEntity, entities: ContentEntity[])
   return [
     { type: "lede", text: root.summary },
     {
-      type: "bullet-list",
-      items: stories.length ? stories.map((story) => story.summary) : root.tags,
+      type: "quote-list",
+      items: stories.length
+        ? stories.map((story) => ({
+            title: story.title,
+            text: story.summary,
+          }))
+        : root.tags.map((tag) => ({
+            title: tag,
+            text: "Shared portfolio signal.",
+          })),
     },
   ];
 };
@@ -211,6 +227,13 @@ const createContactBlocks = (root: PortfolioRootEntity): ClassicRenderBlock[] =>
   {
     type: "lede",
     text: "Open to conversations about junior full-stack, frontend, backend, and product-minded engineering roles.",
+  },
+  {
+    type: "fact-list",
+    items: [
+      { label: "Focus", value: "Junior full-stack and product-minded web roles" },
+      { label: "Location", value: root.payload.location ?? "Switzerland" },
+    ],
   },
   {
     type: "link-list",

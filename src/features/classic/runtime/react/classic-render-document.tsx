@@ -17,6 +17,12 @@ import { Eyebrow, Grid, Heading, Inline, Panel, Stack, Surface, Text } from "@sh
 
 const sectionMetaById = new Map(classicSectionRegistry.map((section) => [section.id, section]));
 
+const priorityLabel = {
+  primary: "Read first",
+  secondary: "Then this",
+  supporting: "Supporting",
+} as const;
+
 const renderLinks = (block: ClassicLinkListBlock | ClassicActionBlock): ReactNode => {
   if (!block.links.length) {
     return null;
@@ -215,30 +221,58 @@ const renderSection = (section: ClassicRenderSection): ReactNode => (
 );
 
 export function ClassicRenderDocumentView({ document }: { document: ClassicRenderDocument }) {
+  const primarySections = document.sections.filter(
+    (section) => sectionMetaById.get(section.id)?.scanPriority === "primary",
+  );
+
   return (
     <Stack gap="lg">
-      <Surface as="section" padding="lg" tone="strong">
-        <Stack gap="sm">
-          <Eyebrow>Classic portfolio mode</Eyebrow>
-          <Heading as="h2" size="hero">
-            {document.title}
-          </Heading>
-          <Text tone="muted" size="lg">
-            {document.subtitle}
-          </Text>
-          <Inline gap="xs" wrap>
-            {document.sections.map((section) => {
-              const meta = sectionMetaById.get(section.id);
+      <Grid minItemWidth="18rem">
+        <Surface as="section" padding="lg" tone="strong" className="classic-hero-card">
+          <Stack gap="sm">
+            <Eyebrow>Classic portfolio mode</Eyebrow>
+            <Heading as="h2" size="hero">
+              {document.title}
+            </Heading>
+            <Text tone="muted" size="lg">
+              {document.subtitle}
+            </Text>
+            <Inline gap="xs" wrap>
+              {document.sections.map((section) => {
+                const meta = sectionMetaById.get(section.id);
 
-              return (
-                <Text key={section.id} size="sm" tone="muted" className="classic-react-tag">
-                  {meta?.scanPriority ?? "secondary"}: {section.title}
-                </Text>
-              );
-            })}
-          </Inline>
-        </Stack>
-      </Surface>
+                return (
+                  <Text key={section.id} size="sm" tone="muted" className="classic-react-tag">
+                    {priorityLabel[meta?.scanPriority ?? "secondary"]}: {section.title}
+                  </Text>
+                );
+              })}
+            </Inline>
+          </Stack>
+        </Surface>
+
+        <Panel as="aside" padding="lg" className="classic-summary-card">
+          <Stack gap="sm">
+            <Eyebrow>Quick review path</Eyebrow>
+            <Heading as="h3" size="card">
+              Start here if you only have a minute
+            </Heading>
+            <Stack gap="xs">
+              {primarySections.map((section, index) => (
+                <div key={section.id} className="classic-summary-step">
+                  <Text size="sm" tone="muted">
+                    {index + 1}
+                  </Text>
+                  <div>
+                    <Text>{section.title}</Text>
+                    {section.summary ? <Text size="sm" tone="muted">{section.summary}</Text> : null}
+                  </div>
+                </div>
+              ))}
+            </Stack>
+          </Stack>
+        </Panel>
+      </Grid>
       <Stack gap="md">{document.sections.map(renderSection)}</Stack>
     </Stack>
   );
