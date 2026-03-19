@@ -29,7 +29,7 @@ export const classicModeDefinition: ModeDefinition = {
     {
       id: "classic-section-order",
       label: "Define final section ordering and scan priority.",
-      status: "todo",
+      status: "done",
     },
     {
       id: "classic-render-blocks",

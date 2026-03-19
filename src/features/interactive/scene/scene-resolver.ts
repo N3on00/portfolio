@@ -1,4 +1,5 @@
 import { createActorStateStore, resolveActorDefinition } from "@shared/actors";
+import type { ActorStateStore } from "@shared/actors";
 import { portfolioContent } from "@shared/content/portfolio-content";
 import { interactiveActorDefinitions, interactiveActorRegistry } from "./actor-registry";
 import type {
@@ -32,8 +33,10 @@ function toInteractionZone(actorId: string): SceneInteractionZone {
   };
 }
 
-export function resolveScene(scene: InteractiveSceneDefinition): ResolvedSceneDefinition {
-  const stateStore = createActorStateStore(interactiveActorDefinitions);
+export function resolveSceneWithState(
+  scene: InteractiveSceneDefinition,
+  stateStore: ActorStateStore,
+): ResolvedSceneDefinition {
 
   const actors: ResolvedSceneActor[] = scene.actors.map((placement) => {
     const actor = interactiveActorRegistry.requireActor(placement.actorId);
@@ -59,6 +62,10 @@ export function resolveScene(scene: InteractiveSceneDefinition): ResolvedSceneDe
     scene,
     actors,
   };
+}
+
+export function resolveScene(scene: InteractiveSceneDefinition): ResolvedSceneDefinition {
+  return resolveSceneWithState(scene, createActorStateStore(interactiveActorDefinitions));
 }
 
 export function getSceneOverlayContent(
