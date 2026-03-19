@@ -13,7 +13,9 @@
 - Done: shared layout, surface, and typography primitives now provide the reusable visual base
 - Done: classic render flow now resolves shared surfaces into buildable sections without a classic-only content fork
 - Done: runtime screen, render flow, and renderer types are aligned on the same section document model
+- Done: React screen now renders the shared classic document instead of a separate status-only placeholder
 - Next: define final section ordering and scan priority
+- Next: refine the React and HTML classic block renderers in parallel without forking their document model
 
 ## Guardrails
 

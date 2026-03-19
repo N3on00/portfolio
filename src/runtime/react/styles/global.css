@@ -180,6 +180,42 @@ select {
   background: rgba(255, 255, 255, 0.72);
 }
 
+.classic-react-section {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.classic-react-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--space-sm, 0.5rem);
+}
+
+.classic-react-facts__item {
+  display: grid;
+  gap: var(--space-2xs, 0.125rem);
+}
+
+.classic-react-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: var(--space-xs, 0.25rem);
+}
+
+.classic-react-tag {
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--color-border, #d8d2c8);
+  border-radius: var(--radius-pill, 999px);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.classic-react-link {
+  color: var(--color-foreground, #111111);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
 @keyframes interactive-pulse {
   0% {
     transform: scale(0.96);
