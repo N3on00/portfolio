@@ -8,18 +8,13 @@
 
 ## Parallel work suggestions
 
-- [x] React/runtime adapter seam exists without moving scene concerns into the shell
-- [x] Actor registry seam exists for registration-driven scene extension
-- [x] Define renderer adapter and scene graph contracts behind the actor registry
-- [x] Model hotspots, focus states, keyboard support, and mobile-friendly interaction fallback
-- [x] Isolate project overlays from renderer internals
-
-## Implemented in this branch
-
-- [x] Generic scene definition with phases, triggers, placements, and actor-backed content
-- [x] Timed PC trigger after an observation phase to start guided exploration
-- [x] Open exploration flow that unlocks the rest of the room after the first clear action
-- [x] Touch target expansion so interaction logic remains usable on mobile
+- Done: React runtime adapter exists without moving scene concerns into the shell
+- Done: actor registry seam exists for registration-driven scene extension
+- Done: shared panel, dialog, hint, and typography shells exist without taking ownership of scene logic
+- Done: scene resolver and runtime screen now read shared mappings and actor-linked content together
+- Done: interactive actor links were realigned to valid shared collections instead of feature-local shadow data
+- Next: define renderer adapter and scene graph contracts behind the actor registry
+- Next: model hotspots, focus states, keyboard support, and accessibility fallback
 
 ## Guardrails
 
