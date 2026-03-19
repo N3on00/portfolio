@@ -1,5 +1,6 @@
 import { designTokens } from "@shared/ui/design-tokens";
 import type { ContentLink } from "@shared/types/portfolio";
+import { getClassicBlockPresentation } from "./classic-block-presentation";
 import type { ClassicRenderBlock, ClassicRenderDocument } from "./classic-rendering-types";
 
 export const renderClassicDocument = (document: ClassicRenderDocument): string => {
@@ -51,22 +52,24 @@ const renderSection = (section: ClassicRenderDocument["sections"][number]): stri
 };
 
 const renderBlock = (block: ClassicRenderBlock): string => {
+  const presentation = getClassicBlockPresentation(block);
+
   switch (block.type) {
     case "lede":
-      return `<p class="classic-lede">${escapeHtml(block.text)}</p>`;
+      return `<div class="classic-block ${presentation.htmlClassName}"><p class="classic-lede">${escapeHtml(block.text)}</p></div>`;
     case "fact-list":
-      return `<dl class="classic-facts">${block.items
+      return `<div class="classic-block ${presentation.htmlClassName}"><dl class="classic-facts">${block.items
         .map(
           (item) =>
             `<div><dt>${escapeHtml(item.label)}</dt><dd>${escapeHtml(item.value)}</dd></div>`,
         )
-        .join("")}</dl>`;
+        .join("")}</dl></div>`;
     case "bullet-list":
-      return `<ul class="classic-bullets">${block.items
+      return `<div class="classic-block ${presentation.htmlClassName}"><ul class="classic-bullets">${block.items
         .map((item) => `<li>${escapeHtml(item)}</li>`)
-        .join("")}</ul>`;
+        .join("")}</ul></div>`;
     case "card-grid":
-      return `<div class="classic-grid">${block.items
+      return `<div class="classic-block ${presentation.htmlClassName}"><div class="classic-grid">${block.items
         .map(
           (item) => `
             <article class="classic-card">
@@ -78,9 +81,9 @@ const renderBlock = (block: ClassicRenderBlock): string => {
               ${renderLinks(item.links)}
             </article>`,
         )
-        .join("")}</div>`;
+        .join("")}</div></div>`;
     case "tag-groups":
-      return `<div class="classic-groups">${block.groups
+      return `<div class="classic-block ${presentation.htmlClassName}"><div class="classic-groups">${block.groups
         .map(
           (group) => `
             <section class="classic-group">
@@ -88,9 +91,9 @@ const renderBlock = (block: ClassicRenderBlock): string => {
               ${renderTagList(group.items)}
             </section>`,
         )
-        .join("")}</div>`;
+        .join("")}</div></div>`;
     case "timeline":
-      return `<div class="classic-timeline">${block.items
+      return `<div class="classic-block ${presentation.htmlClassName}"><div class="classic-timeline">${block.items
         .map(
           (item) => `
             <article class="classic-timeline-item">
@@ -100,15 +103,18 @@ const renderBlock = (block: ClassicRenderBlock): string => {
               ${renderBulletList(item.bullets)}
             </article>`,
         )
-        .join("")}</div>`;
+        .join("")}</div></div>`;
     case "link-list":
       return `
-        <div class="classic-links-block">
+        <div class="classic-block ${presentation.htmlClassName}">
+          <p class="classic-block-label">${escapeHtml(presentation.label)}</p>
+          <div class="classic-links-block">
           ${block.text ? `<p class="classic-links-copy">${escapeHtml(block.text)}</p>` : ""}
           ${renderLinks(block.links)}
+          </div>
         </div>`;
     case "quote-list":
-      return `<div class="classic-quotes">${block.items
+      return `<div class="classic-block ${presentation.htmlClassName}"><div class="classic-quotes">${block.items
         .map(
           (item) => `
             <article class="classic-quote">
@@ -116,13 +122,16 @@ const renderBlock = (block: ClassicRenderBlock): string => {
               <p>${escapeHtml(item.text)}</p>
             </article>`,
         )
-        .join("")}</div>`;
+        .join("")}</div></div>`;
     case "action":
       return `
-        <div class="classic-action">
+        <div class="classic-block ${presentation.htmlClassName}">
+          <p class="classic-block-label">${escapeHtml(presentation.label)}</p>
+          <div class="classic-action">
           <h3>${escapeHtml(block.title)}</h3>
           <p>${escapeHtml(block.text)}</p>
           ${renderLinks(block.links)}
+          </div>
         </div>`;
     default:
       return "";
@@ -268,6 +277,18 @@ const createClassicCss = (): string => {
       line-height: 1.6;
       max-width: 48rem;
       font-size: var(--text-md);
+    }
+
+    .classic-block {
+      margin-bottom: var(--space-lg);
+    }
+
+    .classic-block-label {
+      margin: 0 0 var(--space-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.75rem;
+      color: var(--muted);
     }
 
     .classic-section {

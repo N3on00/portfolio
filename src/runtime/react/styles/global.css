@@ -239,6 +239,11 @@ select {
   text-underline-offset: 0.18em;
 }
 
+.classic-react-block {
+  display: grid;
+  gap: var(--space-xs, 0.25rem);
+}
+
 @keyframes interactive-pulse {
   0% {
     transform: scale(0.96);

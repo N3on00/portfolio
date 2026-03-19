@@ -12,6 +12,7 @@ import type {
   ClassicTimelineBlock,
 } from "@features/classic";
 import { classicSectionRegistry } from "@features/classic";
+import { getClassicBlockPresentation } from "@features/classic";
 import { Eyebrow, Grid, Heading, Inline, Panel, Stack, Surface, Text } from "@shared/ui/react";
 
 const sectionMetaById = new Map(classicSectionRegistry.map((section) => [section.id, section]));
@@ -197,7 +198,18 @@ const renderSection = (section: ClassicRenderSection): ReactNode => (
         </Heading>
         {section.summary ? <Text tone="muted">{section.summary}</Text> : null}
       </Stack>
-      <Stack gap="md">{section.blocks.map((block, index) => <div key={`${section.id}-${index}`}>{renderBlock(block)}</div>)}</Stack>
+      <Stack gap="md">
+        {section.blocks.map((block, index) => {
+          const presentation = getClassicBlockPresentation(block);
+
+          return (
+            <div key={`${section.id}-${index}`} className={presentation.reactClassName}>
+              {block.type !== "lede" ? <Eyebrow>{presentation.label}</Eyebrow> : null}
+              {renderBlock(block)}
+            </div>
+          );
+        })}
+      </Stack>
     </Stack>
   </Surface>
 );

@@ -5,6 +5,7 @@
 - Keep classic-specific structure in the classic feature, but remove stale duplicate file paths and broken type seams that shadowed the shared graph.
 - Keep the classic React screen on top of the same `ClassicRenderDocument` used for HTML output so classic mode has one document model and multiple render adapters.
 - Keep classic scan order declarative in the section registry so section priority changes do not require renderer rewrites.
+- Keep renderer-specific classic styling thin by sharing block presentation metadata across HTML and React adapters.
 - Keep interactive actor registrations mode-local, but realign their linked content to valid shared collections instead of ad hoc local ids.
 - Keep the interactive React adapter renderer-thin: it reduces scene progression and renders hotspots, but the scene contract remains the source of timing, placement, and content linkage.
 - Keep actor state mutable only inside a dedicated runtime session so React screens consume snapshots instead of owning cross-actor progression rules.
