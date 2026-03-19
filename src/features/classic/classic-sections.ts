@@ -6,6 +6,7 @@ export interface ClassicSectionDefinition {
   surfaceId: string;
   actorId: string;
   order: number;
+  scanPriority: "primary" | "secondary" | "supporting";
   contentKey: "projects" | "skills" | "experience" | "contact";
 }
 
@@ -18,6 +19,7 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     surfaceId: "classic-overview",
     actorId: "classic-section-hero",
     order: 1,
+    scanPriority: "primary",
     contentKey: "contact",
   },
   {
@@ -27,7 +29,8 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     summary: "Core positioning and work style derived from shared portfolio and story entities.",
     surfaceId: "classic-overview",
     actorId: "classic-section-about",
-    order: 2,
+    order: 5,
+    scanPriority: "secondary",
     contentKey: "contact",
   },
   {
@@ -37,7 +40,8 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     summary: "Lead proof projects and the skills they demonstrate.",
     surfaceId: "classic-projects",
     actorId: "classic-section-projects",
-    order: 3,
+    order: 2,
+    scanPriority: "primary",
     contentKey: "projects",
   },
   {
@@ -47,7 +51,8 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     summary: "Capabilities grouped by category and backed by project evidence.",
     surfaceId: "classic-skills",
     actorId: "classic-section-skills",
-    order: 4,
+    order: 3,
+    scanPriority: "primary",
     contentKey: "skills",
   },
   {
@@ -57,7 +62,8 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     summary: "Experience blocks rendered from shared experience entities only.",
     surfaceId: "classic-experience",
     actorId: "classic-section-experience",
-    order: 5,
+    order: 4,
+    scanPriority: "secondary",
     contentKey: "experience",
   },
   {
@@ -68,6 +74,7 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     surfaceId: "classic-overview",
     actorId: "classic-section-references",
     order: 6,
+    scanPriority: "supporting",
     contentKey: "contact",
   },
   {
@@ -78,6 +85,7 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     surfaceId: "classic-contact",
     actorId: "classic-section-contact",
     order: 7,
+    scanPriority: "secondary",
     contentKey: "contact",
   },
   {
@@ -88,6 +96,7 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     surfaceId: "classic-contact",
     actorId: "classic-section-cta",
     order: 8,
+    scanPriority: "supporting",
     contentKey: "contact",
   },
 ];
