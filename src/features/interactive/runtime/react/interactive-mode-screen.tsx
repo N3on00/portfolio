@@ -25,9 +25,48 @@ import {
   Surface,
   Text,
 } from "@shared/ui/react";
+import type { ActorReactionDefinition } from "@shared/actors";
 
 const sceneDefinition = interactiveExperience.sceneRegistry[interactiveExperience.defaultSceneId];
 const fallbackViewport = { width: 1280, height: 760 };
+
+const reactionPresentationRegistry = {
+  "project-overlay": {
+    accent: "Projects",
+    description: "Lead work opens in a denser overlay because it carries the deepest proof signals.",
+    className: "is-project-overlay",
+  },
+  "mindset-panel": {
+    accent: "Mindset",
+    description: "Immersion-oriented objects stay lightweight and reflective instead of turning into full project modals.",
+    className: "is-mindset-panel",
+  },
+  "story-panel": {
+    accent: "Story",
+    description: "Narrative fragments stay grouped in a side panel so they support the room instead of replacing it.",
+    className: "is-story-panel",
+  },
+  "contact-panel": {
+    accent: "Presence",
+    description: "Social and contact signals stay practical and quick to scan.",
+    className: "is-contact-panel",
+  },
+  "experience-panel": {
+    accent: "Timeline",
+    description: "Growth and progression use a structured panel instead of an interruptive modal.",
+    className: "is-experience-panel",
+  },
+  "identity-panel": {
+    accent: "Profile",
+    description: "Identity remains compact and anchored in shared portfolio content.",
+    className: "is-identity-panel",
+  },
+  "hint-layer": {
+    accent: "Ambient",
+    description: "Ambient reactions stay inline so they feel like guidance, not navigation.",
+    className: "is-hint-layer",
+  },
+} as const;
 
 const getInputMode = (): SceneInputMode => {
   if (typeof window === "undefined") {
@@ -53,6 +92,18 @@ const selectPrimaryAction = (actor: ResolvedSceneActor): ActorActionKind => {
 
 function toCurrentPhase(resolvedScene: ResolvedSceneDefinition, phaseId: string) {
   return resolvedScene.scene.phases.find((phase) => phase.id === phaseId) ?? resolvedScene.scene.phases[0];
+}
+
+function getReactionPresentation(reaction: ActorReactionDefinition | undefined) {
+  if (!reaction) {
+    return undefined;
+  }
+
+  return reactionPresentationRegistry[reaction.target as keyof typeof reactionPresentationRegistry] ?? {
+    accent: reaction.type,
+    description: "The reaction stays declarative and feature-owned, even when no target-specific styling is defined yet.",
+    className: "is-generic-reaction",
+  };
 }
 
 export function InteractiveModeScreen() {
@@ -95,6 +146,7 @@ export function InteractiveModeScreen() {
     ? selectedActor?.resolvedActor.actions.find((action) => action.id === selectedActorState.lastActionId)
     : undefined;
   const selectedReaction = selectedAction?.reaction;
+  const selectedPresentation = getReactionPresentation(selectedReaction);
 
   const handleTargetActivate = (target: SceneInteractionTarget) => {
     const actor = snapshot.resolvedScene.actors.find((entry) => entry.id === target.actorId);
@@ -258,11 +310,12 @@ export function InteractiveModeScreen() {
 
       {selectedActor && overlay && selectedReaction?.type === "overlay" ? (
         <ModalShell
-          eyebrow={`${selectedActor.actor.type} - ${selectedReaction.target}`}
+          eyebrow={`${selectedPresentation?.accent ?? selectedActor.actor.type} - ${selectedReaction.target}`}
           title={overlay.headline}
           footer={<ActionTrigger onClick={() => setSelectedActorId(undefined)}>Close</ActionTrigger>}
         >
-          <Stack gap="sm">
+          <Stack gap="sm" className={`interactive-reaction ${selectedPresentation?.className ?? ""}`}>
+            <Text tone="muted">{selectedPresentation?.description}</Text>
             {overlay.cards.map((card) => (
               <Panel key={card.id} as="article" padding="sm">
                 <Stack gap="xs">
@@ -288,15 +341,16 @@ export function InteractiveModeScreen() {
       ) : null}
 
       {selectedActor && overlay && selectedReaction && selectedReaction.type !== "overlay" ? (
-        <div className="interactive-room__detail-surface">
+        <div className={`interactive-room__detail-surface interactive-reaction ${selectedPresentation?.className ?? ""}`}>
           {selectedReaction.type === "panel" ? (
             <Panel as="aside" padding="md" tone="strong">
               <Stack gap="sm">
-                <Eyebrow>{selectedReaction.target}</Eyebrow>
+                <Eyebrow>{selectedPresentation?.accent ?? selectedReaction.target}</Eyebrow>
                 <Heading as="h3" size="card">
                   {overlay.headline}
                 </Heading>
                 <Text tone="muted">{selectedAction?.intent}</Text>
+                <Text size="sm" tone="muted">{selectedPresentation?.description}</Text>
                 <Stack gap="sm">
                   {overlay.cards.map((card) => (
                     <Panel key={card.id} as="article" padding="sm">
@@ -314,8 +368,9 @@ export function InteractiveModeScreen() {
               </Stack>
             </Panel>
           ) : (
-            <HintShell label={selectedReaction.target}>
+            <HintShell label={selectedPresentation?.accent ?? selectedReaction.target} className="interactive-reaction__inline-hint">
               <Text>{selectedAction?.intent}</Text>
+              <Text size="sm" tone="muted">{selectedPresentation?.description}</Text>
               {overlay.cards[0] ? <Text tone="muted">{overlay.cards[0].body}</Text> : null}
               <ActionTrigger variant="ghost" onClick={() => setSelectedActorId(undefined)}>
                 Dismiss

@@ -1,4 +1,5 @@
 export { classicModeDefinition } from "./classic-mode.contract";
+export { getClassicBlockPresentation } from "./classic-block-presentation";
 export { createClassicRenderDocument } from "./classic-render-flow";
 export { renderClassicDocument } from "./classic-renderer";
 export { classicModeHtml, classicRenderDocument } from "./classic-mode.runtime";
