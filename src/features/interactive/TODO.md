@@ -15,7 +15,8 @@
 - Done: interactive actor links were realigned to valid shared collections instead of feature-local shadow data
 - Done: renderer adapter now turns scene phases, hotspots, and actor actions into a playable React room surface
 - Done: keyboard-accessible fallback actions and modal overlays now sit on top of the shared UI shells
-- Next: synchronize actor runtime state, overlay reactions, and richer visual rendering without hardwiring them into the shell
+- Done: actor runtime state and scene progression are now synchronized through a dedicated interactive runtime session
+- Next: map actor reactions to dedicated overlay/panel renderers instead of the current generic modal fallback
 
 ## Guardrails
 

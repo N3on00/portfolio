@@ -5,4 +5,5 @@
 - Keep classic-specific structure in the classic feature, but remove stale duplicate file paths and broken type seams that shadowed the shared graph.
 - Keep interactive actor registrations mode-local, but realign their linked content to valid shared collections instead of ad hoc local ids.
 - Keep the interactive React adapter renderer-thin: it reduces scene progression and renders hotspots, but the scene contract remains the source of timing, placement, and content linkage.
+- Keep actor state mutable only inside a dedicated runtime session so React screens consume snapshots instead of owning cross-actor progression rules.
 - Prefer targeted fixes over broad rewrites: type seams, stale exports, and duplicate classic files were corrected without moving domain ownership across layers.

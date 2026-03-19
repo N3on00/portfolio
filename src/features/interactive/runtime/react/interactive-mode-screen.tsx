@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { interactiveExperience, interactiveModeDefinition } from "@features/interactive";
-import { getSceneOverlayContent } from "@features/interactive/scene/scene-resolver";
 import {
-  createInitialSceneProgress,
+  createSceneRuntimeSession,
   getActiveInteractionTargets,
-  reduceSceneProgress,
-} from "@features/interactive/scene/scene-progression";
+  getSceneOverlayContent,
+} from "@features/interactive/scene";
 import type { ActorActionKind } from "@shared/actors";
 import type {
   ResolvedSceneActor,
@@ -27,7 +26,7 @@ import {
   Text,
 } from "@shared/ui/react";
 
-const roomScene = interactiveExperience.getScene(interactiveExperience.defaultSceneId);
+const sceneDefinition = interactiveExperience.sceneRegistry[interactiveExperience.defaultSceneId];
 const fallbackViewport = { width: 1280, height: 760 };
 
 const getInputMode = (): SceneInputMode => {
@@ -57,7 +56,8 @@ function toCurrentPhase(resolvedScene: ResolvedSceneDefinition, phaseId: string)
 }
 
 export function InteractiveModeScreen() {
-  const [progress, setProgress] = useState(() => createInitialSceneProgress(roomScene, performance.now()));
+  const sessionRef = useRef(createSceneRuntimeSession(sceneDefinition, performance.now()));
+  const [snapshot, setSnapshot] = useState(() => sessionRef.current.snapshot());
   const [selectedActorId, setSelectedActorId] = useState<string>();
   const [inputMode, setInputMode] = useState<SceneInputMode>(getInputMode);
 
@@ -65,7 +65,7 @@ export function InteractiveModeScreen() {
     const mediaQuery = window.matchMedia("(pointer: coarse)");
     const updateInputMode = () => setInputMode(mediaQuery.matches ? "touch" : "pointer");
     const timer = window.setInterval(() => {
-      setProgress((current) => reduceSceneProgress(roomScene, current, { kind: "tick", atMs: performance.now() }));
+      setSnapshot(sessionRef.current.tick(performance.now()));
     }, 500);
 
     updateInputMode();
@@ -79,34 +79,27 @@ export function InteractiveModeScreen() {
 
   const activeTargets = useMemo(
     () =>
-      getActiveInteractionTargets(roomScene, progress, {
+      getActiveInteractionTargets(snapshot.resolvedScene, snapshot.progress, {
         width: fallbackViewport.width,
         height: fallbackViewport.height,
         inputMode,
       }),
-    [progress, inputMode],
+    [snapshot, inputMode],
   );
 
-  const currentPhase = toCurrentPhase(roomScene, progress.currentPhaseId);
-  const selectedActor = roomScene.actors.find((actor) => actor.id === selectedActorId);
-  const overlay = selectedActor ? getSceneOverlayContent(roomScene, selectedActor.id) : undefined;
+  const currentPhase = toCurrentPhase(snapshot.resolvedScene, snapshot.progress.currentPhaseId);
+  const selectedActor = snapshot.resolvedScene.actors.find((actor) => actor.id === selectedActorId);
+  const overlay = selectedActor ? getSceneOverlayContent(snapshot.resolvedScene, selectedActor.id) : undefined;
 
   const handleTargetActivate = (target: SceneInteractionTarget) => {
-    const actor = roomScene.actors.find((entry) => entry.id === target.actorId);
+    const actor = snapshot.resolvedScene.actors.find((entry) => entry.id === target.actorId);
 
     if (!actor) {
       return;
     }
 
     setSelectedActorId(actor.id);
-    setProgress((current) =>
-      reduceSceneProgress(roomScene, current, {
-        kind: "actor-action",
-        actorId: actor.id,
-        actionKind: selectPrimaryAction(actor),
-        atMs: performance.now(),
-      }),
-    );
+    setSnapshot(sessionRef.current.applyActorAction(actor.id, selectPrimaryAction(actor), performance.now()));
   };
 
   return (
@@ -140,29 +133,30 @@ export function InteractiveModeScreen() {
                 {activeTargets.length} active hotspots
               </Heading>
               <Text>
-                Input mode: {inputMode}. Registered scene actors: {roomScene.actors.length}. Completed interactions: {progress.completedActorIds.length}.
+                Input mode: {inputMode}. Registered scene actors: {snapshot.resolvedScene.actors.length}. Completed interactions: {snapshot.progress.completedActorIds.length}.
               </Text>
             </Stack>
           </Panel>
         </Grid>
 
-        <div className="interactive-room" aria-label={`${roomScene.scene.label} scene`}>
+        <div className="interactive-room" aria-label={`${snapshot.resolvedScene.scene.label} scene`}>
           <div className="interactive-room__backdrop" aria-hidden="true">
             <div className="interactive-room__glow interactive-room__glow--left" />
             <div className="interactive-room__glow interactive-room__glow--right" />
           </div>
 
           <div className="interactive-room__canvas">
-            {roomScene.actors.map((actor) => {
+            {snapshot.resolvedScene.actors.map((actor) => {
               const isVisible = currentPhase.enabledActorIds.includes(actor.id);
               const isHintVisible =
-                currentPhase.visibleHintActorIds.includes(actor.id) || progress.shownHintActorIds.includes(actor.id);
+                currentPhase.visibleHintActorIds.includes(actor.id) || snapshot.progress.shownHintActorIds.includes(actor.id);
               const target = activeTargets.find((entry) => entry.actorId === actor.id);
+              const actorSnapshot = snapshot.actorState[actor.actor.id];
 
               return (
                 <div
                   key={actor.id}
-                  className={`interactive-room__object${isVisible ? " is-visible" : ""}${progress.focusedActorId === actor.id ? " is-focused" : ""}`}
+                  className={`interactive-room__object${isVisible ? " is-visible" : ""}${snapshot.progress.focusedActorId === actor.id ? " is-focused" : ""}`}
                   style={{
                     left: `${actor.placement.x * 100}%`,
                     top: `${actor.placement.y * 100}%`,
@@ -177,7 +171,7 @@ export function InteractiveModeScreen() {
                       {actor.label}
                     </Heading>
                     <Text size="sm" tone="muted">
-                      {actor.resolvedActor.contentLinks.length} linked entries
+                      State: {actorSnapshot?.state ?? actor.resolvedActor.state.state}. Linked entries: {actor.resolvedActor.contentLinks.length}
                     </Text>
                   </div>
 
@@ -237,7 +231,7 @@ export function InteractiveModeScreen() {
               The room starts in observation mode, nudges the PC after a delay, and opens the rest of the room once project exploration begins.
             </Text>
             <Text size="sm" tone="muted">
-              Triggered transitions: {progress.triggeredIds.length}. Visible hints: {progress.shownHintActorIds.length}.
+              Triggered transitions: {snapshot.progress.triggeredIds.length}. Visible hints: {snapshot.progress.shownHintActorIds.length}.
             </Text>
           </HintShell>
         </Grid>
