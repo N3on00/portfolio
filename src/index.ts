@@ -4,6 +4,4 @@ export * from "./shared/config/site.config";
 export * from "./shared/content/portfolio-content";
 export * from "./shared/types/portfolio";
 export * from "./shared/ui/design-tokens";
-export * from "./shared/actors";
-export * from "./features/classic";
-export * from "./features/interactive";
+export * from "./shared/ui/react";

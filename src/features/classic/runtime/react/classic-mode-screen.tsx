@@ -1,65 +1,91 @@
 import { classicModeDefinition } from "@features/classic/classic-mode.contract";
-import { classicRenderDocument } from "@features/classic/classic-mode.runtime";
 import { classicSectionRegistry } from "@features/classic/sections/section-registry";
-import {
-  createPortfolioEntityIndex,
-  getPortfolioModeMapping,
-  resolvePortfolioSurface,
-} from "@shared/content/portfolio-graph";
 import { portfolioContent } from "@shared/content/portfolio-content";
+import {
+  Eyebrow,
+  Grid,
+  Heading,
+  HintShell,
+  Panel,
+  Stack,
+  Surface,
+  Text,
+} from "@shared/ui/react";
+
+const countEntities = (kind: string) =>
+  portfolioContent.entities.filter((entity) => entity.kind === kind).length;
+
+const rootPortfolio = portfolioContent.entities.find(
+  (entity) => entity.id === portfolioContent.rootPortfolioId && entity.kind === "portfolio",
+);
+
+const sectionCounts = {
+  projects: () => countEntities("project"),
+  skills: () => countEntities("skill"),
+  experience: () => countEntities("experience"),
+  contact: () => rootPortfolio?.links?.length ?? 0,
+};
 
 export function ClassicModeScreen() {
-  const entityIndex = createPortfolioEntityIndex(portfolioContent);
-  const rootEntity = entityIndex.get(portfolioContent.rootPortfolioId);
-  const classicMapping = getPortfolioModeMapping(portfolioContent, "classic");
-  const resolvedSurfaces = (classicMapping?.surfaces ?? []).map((surface) =>
-    resolvePortfolioSurface(portfolioContent, surface),
-  );
-
   return (
-    <section className="mode-surface" aria-labelledby="classic-mode-title">
-      <header className="mode-surface__header">
-        <p className="surface-label">Classic runtime foundation</p>
-        <h2 id="classic-mode-title" className="mode-surface__title">
-          {classicModeDefinition.label}
-        </h2>
-        <p className="mode-surface__lede">
-          The classic route now reads shared surfaces and renders scan-first sections from the unified content graph.
-        </p>
-      </header>
+    <Surface as="section" padding="lg" aria-labelledby="classic-mode-title">
+      <Stack gap="lg">
+        <Stack gap="sm">
+          <Eyebrow>Classic runtime foundation</Eyebrow>
+          <Heading as="h2" size="section" id="classic-mode-title">
+            {classicModeDefinition.label}
+          </Heading>
+          <Text tone="muted" size="lg">
+            The mode stays scan-friendly, while layout primitives, panels, typography and action styling all come from the shared layer.
+          </Text>
+        </Stack>
 
-      <div className="mode-surface__grid">
-        <article className="module-card module-card--mono">
-          <p className="card-label">Section registry</p>
-          <h3 className="module-card__title">Composable overview</h3>
-          <p className="card-text">
-            Registered sections: {classicSectionRegistry.length}. Rendered sections: {classicRenderDocument.sections.length}.
-          </p>
-        </article>
+        <Grid>
+          <Panel as="article" tone="strong">
+            <Stack gap="sm">
+              <Eyebrow>Section registry</Eyebrow>
+              <Heading as="h3" size="card">
+                Composable overview
+              </Heading>
+              <Text>
+                Sections are registered structurally so layout work can evolve without changing route wiring.
+              </Text>
+            </Stack>
+          </Panel>
 
-        <article className="module-card module-card--mono">
-          <p className="card-label">Shared graph</p>
-          <h3 className="module-card__title">Mapped, not duplicated</h3>
-          <p className="card-text">
-            Root entity: {rootEntity?.title ?? "Portfolio"}. Shared entities: {portfolioContent.entities.length}. Classic surfaces:{" "}
-            {resolvedSurfaces.length}.
-          </p>
-        </article>
-      </div>
+          <Panel as="article" tone="strong">
+            <Stack gap="sm">
+              <Eyebrow>Shared content</Eyebrow>
+              <Heading as="h3" size="card">
+                Mapped, not duplicated
+              </Heading>
+              <Text>
+                Identity source: {rootPortfolio?.title ?? "Portfolio root"}. Section data stays in shared content.
+              </Text>
+            </Stack>
+          </Panel>
+        </Grid>
 
-      <div className="section-list" aria-label="Classic sections">
-        {classicRenderDocument.sections.map((section) => {
-          const surface = classicMapping?.surfaces.find((entry) => entry.id === section.id);
+        <HintShell label="Shared stays generic">
+          <Text>
+            Shared UI owns shells, spacing and typography helpers. Section ordering, scan priority and content mapping stay in the classic feature.
+          </Text>
+        </HintShell>
 
-          return (
-            <div key={section.id} className="section-item">
-              <p className="section-item__label">Section</p>
-              <h3 className="section-item__title">{section.title}</h3>
-              <p className="section-item__value">Blocks: {section.blocks.length}. Root entities: {surface?.rootEntityIds.length ?? 0}.</p>
-            </div>
-          );
-        })}
-      </div>
-    </section>
+        <Stack gap="sm" aria-label="Classic sections">
+          {classicSectionRegistry.map((section) => (
+            <Panel key={section.id} as="article" padding="sm">
+              <Stack gap="xs">
+                <Eyebrow>Section</Eyebrow>
+                <Heading as="h3" size="card">
+                  {section.label}
+                </Heading>
+                <Text tone="muted">Connected entries: {sectionCounts[section.contentKey]()}.</Text>
+              </Stack>
+            </Panel>
+          ))}
+        </Stack>
+      </Stack>
+    </Surface>
   );
 }

@@ -6,16 +6,12 @@
 - Central routing and mode switching
 - Cross-mode integration points
 
-## Completed baseline
+## Parallel work suggestions
 
-- [x] React shell layout reads from `appShell`
-- [x] Router integration exists for `/`, `/interactive`, and `/classic`
-- [x] Runtime registry resolves feature entry modules without hardwiring feature internals into the shell
-
-## Next seams
-
-- [ ] Add shared overlay orchestration once a real interactive popup flow exists
-- [ ] Extract richer navigation metadata only if both modes need it
+- Done: shell layout is implemented against `appShell`
+- Done: router integration exists for `/`, `/interactive`, and `/classic`
+- Done: mode switcher behavior stays route-based and decoupled from feature internals
+- Done: runtime shell now composes both integrated feature modules without route-local fallback glue
 
 ## Guardrails
 
