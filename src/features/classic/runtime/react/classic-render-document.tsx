@@ -11,7 +11,10 @@ import type {
   ClassicTagGroupsBlock,
   ClassicTimelineBlock,
 } from "@features/classic";
+import { classicSectionRegistry } from "@features/classic";
 import { Eyebrow, Grid, Heading, Inline, Panel, Stack, Surface, Text } from "@shared/ui/react";
+
+const sectionMetaById = new Map(classicSectionRegistry.map((section) => [section.id, section]));
 
 const renderLinks = (block: ClassicLinkListBlock | ClassicActionBlock): ReactNode => {
   if (!block.links.length) {
@@ -211,6 +214,17 @@ export function ClassicRenderDocumentView({ document }: { document: ClassicRende
           <Text tone="muted" size="lg">
             {document.subtitle}
           </Text>
+          <Inline gap="xs" wrap>
+            {document.sections.map((section) => {
+              const meta = sectionMetaById.get(section.id);
+
+              return (
+                <Text key={section.id} size="sm" tone="muted" className="classic-react-tag">
+                  {meta?.scanPriority ?? "secondary"}: {section.title}
+                </Text>
+              );
+            })}
+          </Inline>
         </Stack>
       </Surface>
       <Stack gap="md">{document.sections.map(renderSection)}</Stack>
