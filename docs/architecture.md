@@ -2,80 +2,123 @@
 
 ## Goal
 
-This repository now provides a modular foundation for a portfolio with two clearly separated modes:
+This repository implements one portfolio application with two distinct modes on top of shared content and shared contracts:
 
-- `interactive`: main experience for the 2D room and project exploration
-- `classic`: reduced black and white portfolio overview
+- `interactive`: a room-based experience with actor-driven interactions, scene progression, and contextual reactions
+- `classic`: a reduced scan-first portfolio view rendered from the same shared content graph
 
-The current state is intentionally minimal. It defines boundaries, shared contracts, and extension points so parallel branches can work independently without colliding on the same concerns.
+The architecture is designed so new content, scenes, sections, and presentation variants can be added without rewriting the app shell.
 
-## Module boundaries
+## Boundaries
 
 ### `src/app`
 
-- Shared app shell contract
-- Shared route registry
-- No mode-specific content or rendering logic
+- route ids and route definitions
+- shell-level contracts only
+- no feature behavior or portfolio content
 
 ### `src/features/interactive`
 
-- Owns the room scene, object interactions, hints, and PC popup flows
-- Must consume shared content instead of duplicating project data
-- Contains its own TODO file for deeper implementation work
+- scene definitions
+- room object placements and hotspots
+- scene progression and runtime session state
+- reaction presentation routing for the interactive React adapter
 
 ### `src/features/classic`
 
-- Owns the reduced portfolio overview mode
-- Must stay presentation-focused and lightweight
-- Contains its own TODO file for section design and content mapping
+- section registry and scan priority
+- mapping from shared content to classic render blocks
+- renderer adapters for HTML and React
 
 ### `src/shared`
 
-- `config`: site-wide identity and mode configuration
-- `content`: central portfolio data source for both modes
-- `types`: shared contracts and module interfaces
-- `ui`: shared design tokens
+- `content`: typed entities, relations, notes, and mode mappings
+- `actors`: shared actor contracts, registry, resolver, and state store
+- `types`: cross-module contracts
+- `ui`: design tokens and reusable React primitives
 
 ### `src/runtime/react`
 
-- Owns React + Vite bootstrapping, route rendering, and shell composition
-- Resolves feature screens through a runtime registry keyed by `entryModule`
-- Must not become the home of feature behavior or shared domain data
+- Vite/React bootstrapping
+- runtime module registry
+- route rendering and shared global styles
+- no ownership of feature logic
 
-## Routing baseline
+## Core architectural rules
 
-- `/` -> defaults to interactive mode
-- `/interactive` -> explicit interactive mode
-- `/classic` -> explicit classic mode
+- shared content is the source of truth
+- feature logic stays in feature modules
+- rendering adapters stay thin
+- routing stays centralized
+- new capabilities should prefer registration, mapping, and contracts over hardcoded view logic
 
-Routing is defined centrally in `src/app/routing/routes.ts` so both modes can evolve behind stable route contracts.
+## Shared data model
 
-## Parallel branch guidance
+The portfolio content is modeled as:
 
-- Branch A can focus on interactive mode internals inside `src/features/interactive`
-- Branch B can focus on classic mode layout and content presentation inside `src/features/classic`
-- Shared updates to identity, project metadata, and reusable tokens belong in `src/shared`
-- Shell-level navigation, mode switching, and cross-mode integration belong in `src/app`
+- `entities`: typed portfolio facts such as portfolio root, projects, skills, experiences, and story fragments
+- `relations`: graph links such as evidence, support, or reveal paths
+- `modeMappings`: traversal roots and surface definitions per mode
 
-## Current implementation level
+That allows both modes to consume one durable content model instead of forking data.
 
-- Types, route definitions, shared config, and design tokens exist
-- Mode contracts define ownership, extension points, and the shared content mapping they consume
-- Shared content now uses one typed entity registry with reusable relations and mode mappings
-- A shared actor foundation exists for cross-mode interaction logic and content mapping
-- React + Vite runtime wiring now exists in a dedicated adapter layer
-- No game logic or final portfolio presentation is locked in yet
+## Actor model
 
-## Actor foundation
+The actor system in `src/shared/actors` is the reusable interaction backbone.
 
-- The generic actor system lives in `src/shared/actors`
-- Architecture rationale and rejected alternatives are documented in `docs/actor-system-architecture.md`
-- Both modes now treat actor registration as the preferred path for future room objects, classic blocks, and popup triggers
-- Content-model rationale and extension rules are documented in `docs/content-model.md`
+Actors define:
 
-## Suggested next steps
+- identity and type
+- placements
+- actions and reactions
+- state transitions and flags
+- content links into the shared graph
 
-1. Expand the interactive actor registry and scene contracts behind the existing runtime seam.
-2. Implement the classic mode sections against the shared section registry and shared content mappings.
-3. Teach both renderers to traverse `modeMappings` before introducing new mode-local content structures.
-4. Build each mode in its own branch against the shared module boundaries.
+Interactive mode uses actors for room objects and overlays.
+Classic mode uses the same model for section-oriented content binding.
+
+## Runtime model
+
+### Interactive mode
+
+- scene definitions stay renderer-agnostic
+- progression is reducer-based
+- a dedicated runtime session synchronizes actor state and scene progression
+- the React adapter renders hotspots and chooses presentation variants for reactions
+
+### Classic mode
+
+- the classic render flow builds a `ClassicRenderDocument`
+- both HTML and React consume that same document model
+- shared block presentation metadata keeps those adapters aligned without coupling them together too tightly
+
+## Routes
+
+- `/` -> interactive mode
+- `/interactive` -> interactive mode
+- `/classic` -> classic mode
+
+## Extension strategy
+
+### Add interactive content
+
+1. add or extend shared content in `src/shared/content/portfolio-content.ts`
+2. register or extend an actor in `src/features/interactive/scene/actor-registry.ts`
+3. place it in a scene definition
+4. let the runtime adapter consume the resolved actor and reaction
+
+### Add classic content
+
+1. add shared content and relations
+2. expose it through an existing or new mode surface mapping
+3. update section registry or render flow where needed
+4. keep renderer changes adapter-focused
+
+## Reference documents
+
+- `docs/actor-system-architecture.md`
+- `docs/content-model.md`
+- `docs/interactive-scene-system.md`
+- `docs/runtime-integration.md`
+- `docs/integration-decisions.md`
+- `docs/deployment.md`

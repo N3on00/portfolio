@@ -1,59 +1,126 @@
-# Portfolio Source Pack
+# Patrik Egger Portfolio
 
-This folder is a filtered, portfolio-focused source pack based on the projects in `C:\Coding` and the public repositories on `github.com/N3on00`.
+This repository contains the source code for `portfolio.pegger.dev`.
 
-## Architecture bootstrap
+It is a Vite + React portfolio with two presentation modes built on one shared content graph:
 
-- Modular portfolio foundation: `docs/architecture.md`
-- Runtime decision and integration shape: `docs/runtime-integration.md`
-- Final integration notes: `docs/integration-decisions.md`
-- Shared app layer: `src/app/TODO.md`
-- Shared contracts and tokens: `src/shared/TODO.md`
-- Interactive mode workstream: `src/features/interactive/TODO.md`
-- Classic mode workstream: `src/features/classic/TODO.md`
+- `interactive`: a room-based portfolio experience with actor-driven hotspots, scene progression, and contextual reactions
+- `classic`: a reduced scan-first portfolio view rendered from the same shared document model
 
-## Best projects to lead with
+## Live
 
-### 1. SpotOnSight
-- Best overall portfolio piece.
-- Strongest signals: full-stack architecture, API design, Vue frontend, FastAPI backend, MongoDB, mobile wrapper, Docker, CI/CD, tests, and technical documentation.
-- Best use: lead project for junior full-stack, frontend, backend, or product-minded developer applications.
+- Production: `https://portfolio.pegger.dev`
 
-### 2. pay-qr-with-apple-pay
-- Strong prototype/demo project.
-- Strongest signals: payment flow design, Vue frontend, Express backend, QR parsing, Stripe integration, demo-mode thinking, and architecture docs.
-- Best use: second portfolio project that shows practical product thinking and user flow design.
+## Core idea
 
-### 3. better_weather
-- Useful optional project if you want more technical range.
-- Strongest signals: multi-part architecture, testability standards, Python + TypeScript/Vue mix, and hardware/data pipeline thinking.
-- Best use: mention as an engineering/IoT-style systems project if the role values testability, integration, or applied software.
+The repository is structured so content, behavior, rendering, routing, and infrastructure stay separate:
 
-## Projects to use carefully
+- shared portfolio content is defined once
+- both modes project from the same entities, relations, and mode mappings
+- feature behavior stays inside the owning feature module
+- React is only the runtime adapter, not the domain model
 
-### M335
-- Useful as supporting context because it documents process, reflection, and coursework quality.
-- Not ideal as a main standalone portfolio item because it overlaps heavily with `SpotOnSight` and reads as school framing first.
+That keeps the portfolio extensible without forcing new sections, scenes, or overlays into the app shell.
 
-### DiscordBot
-- Has some real technical value: async commands, queue logic, voice integration, and third-party tooling.
-- Only use after removing the hardcoded token and cleaning the repo structure.
+## Project structure
 
-## Projects to filter out
+```text
+src/
+|- app/                     shared shell and route contracts
+|- features/
+|  |- interactive/          scene system, actor-driven interactions, React adapter
+|  |- classic/              classic render flow, block rendering, React adapter
+|- runtime/react/           Vite/React bootstrapping and runtime composition
+|- shared/
+|  |- actors/               generic actor contracts, registry, resolver, state store
+|  |- content/              shared portfolio entities, relations, and mode mappings
+|  |- types/                cross-module contracts
+|  |- ui/                   design tokens and reusable React primitives
+docs/
+|- architecture.md
+|- actor-system-architecture.md
+|- content-model.md
+|- interactive-scene-system.md
+|- runtime-integration.md
+|- integration-decisions.md
+|- deployment.md
+scripts/
+|- deploy-portfolio.sh
+```
 
-- `BO6_SafeScript`
-- `BongoCat_claimBoxes`
+## Architecture summary
 
-These are fine as personal experiments, but they do not help much in a professional portfolio compared with your stronger work.
+- `src/shared/content/portfolio-content.ts` is the single source of truth for portfolio content
+- `src/shared/actors` defines reusable actor contracts and state handling
+- `src/features/interactive` owns scene composition, progression, hotspots, and reaction routing
+- `src/features/classic` owns section ordering, scan priority, block composition, and renderer adapters
+- `src/runtime/react` mounts mode entrypoints and keeps routing/runtime concerns out of feature logic
 
-## Important repo hygiene notes
+Further details live in:
 
-- `SpotOnSight` currently contains a committed private key in `C:\Coding\SpotOnSight\ssh.txt`. Do not present or share that repo publicly until the key is rotated and history is cleaned.
-- `DiscordBot` contains a hardcoded bot token in `C:\Coding\DiscordBot\Main.py:11`. Rotate it and remove it before using the project anywhere public.
-- The public GitHub repo `github.com/N3on00/pay-qr-with-apple-pay` appears empty right now, while the local project is much more complete.
+- `docs/architecture.md`
+- `docs/integration-decisions.md`
+- `docs/deployment.md`
 
-## How to use this folder
+## Development
 
-- Start with `portfolio/PROJECT_LIBRARY.md` for project descriptions you can copy from.
-- Use `portfolio/SKILLS_AND_CAPABILITIES.md` for your skills, strengths, and likely impact.
-- Use `portfolio/REPO_NOTES.md` for GitHub-specific positioning and cleanup priorities.
+Prerequisites:
+
+- Node.js 20+
+- npm
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start local development:
+
+```bash
+npm run dev
+```
+
+Build production bundle:
+
+```bash
+npm run build
+```
+
+Type-check the project:
+
+```bash
+npm run typecheck
+```
+
+## Routes
+
+- `/` -> interactive mode
+- `/interactive` -> interactive mode directly
+- `/classic` -> classic mode directly
+
+## Deployment
+
+The production site is deployed as static assets behind Caddy on the target server.
+
+- deployment notes: `docs/deployment.md`
+- helper script: `scripts/deploy-portfolio.sh`
+
+The deployment flow is intentionally small:
+
+1. build locally
+2. upload `dist/`
+3. serve it through the portfolio frontend container
+4. expose the domain through the existing reverse proxy
+
+## Documentation conventions
+
+- product and architecture rationale live in `docs/`
+- feature-local progress stays in the feature `TODO.md` files
+- shared UI boundaries live in `src/shared/ui/README.md`
+
+## Repository hygiene
+
+- this repo should only contain files that directly support the portfolio app
+- external project-positioning notes and unrelated career-material docs were intentionally removed from the root
+- deployment credentials and private keys must stay outside this repository
