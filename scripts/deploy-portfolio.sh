@@ -6,22 +6,21 @@ REMOTE_USER="${REMOTE_USER:-root}"
 REMOTE_PORT="${REMOTE_PORT:-22}"
 REMOTE_DIR="${REMOTE_DIR:-/opt/portfolio}"
 CADDYFILE_PATH="${CADDYFILE_PATH:-/opt/spotonsight/infrastructure/caddy/Caddyfile}"
-SSH_KEY_PATH="${SSH_KEY_PATH:-}"
+DEPLOY_PASSWORD="${DEPLOY_PASSWORD:-}"
 
-if [[ -z "${SSH_KEY_PATH}" ]]; then
-  echo "SSH_KEY_PATH is required"
-  exit 1
-fi
-
-if [[ ! -f "${SSH_KEY_PATH}" ]]; then
-  echo "SSH key not found: ${SSH_KEY_PATH}"
+if [[ -z "${DEPLOY_PASSWORD}" ]]; then
+  echo "DEPLOY_PASSWORD is required"
   exit 1
 fi
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 ssh_cmd() {
-  ssh -i "${SSH_KEY_PATH}" -p "${REMOTE_PORT}" -o StrictHostKeyChecking=accept-new "${REMOTE_USER}@${REMOTE_HOST}" "$@"
+  sshpass -p "${DEPLOY_PASSWORD}" ssh -p "${REMOTE_PORT}" -o StrictHostKeyChecking=accept-new "${REMOTE_USER}@${REMOTE_HOST}" "$@"
+}
+
+rsync_cmd() {
+  sshpass -p "${DEPLOY_PASSWORD}" rsync -e "ssh -p ${REMOTE_PORT} -o StrictHostKeyChecking=accept-new" "$@"
 }
 
 cd "${ROOT_DIR}"
@@ -30,7 +29,7 @@ npm run build
 
 ssh_cmd "mkdir -p ${REMOTE_DIR}/dist ${REMOTE_DIR}/config"
 
-tar -czf - dist | ssh -i "${SSH_KEY_PATH}" -p "${REMOTE_PORT}" -o StrictHostKeyChecking=accept-new \
+tar -czf - dist | sshpass -p "${DEPLOY_PASSWORD}" ssh -p "${REMOTE_PORT}" -o StrictHostKeyChecking=accept-new \
   "${REMOTE_USER}@${REMOTE_HOST}" "rm -rf ${REMOTE_DIR}/dist/* && tar -xzf - -C ${REMOTE_DIR}"
 
 ssh_cmd "cat > ${REMOTE_DIR}/config/default.conf <<'EOF'

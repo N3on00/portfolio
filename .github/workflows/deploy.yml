@@ -23,17 +23,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Prepare SSH key
-        env:
-          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-        run: |
-          mkdir -p ~/.ssh
-          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/portfolio_deploy_key
-          chmod 600 ~/.ssh/portfolio_deploy_key
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Add host to known_hosts
+        run: ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to production server
         env:
-          SSH_KEY_PATH: ~/.ssh/portfolio_deploy_key
+          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
           REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_USER }}
           REMOTE_PORT: ${{ secrets.DEPLOY_PORT }}
