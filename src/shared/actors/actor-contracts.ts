@@ -1,4 +1,11 @@
-import type { AppModeKey } from "@shared/types/portfolio";
+import type {
+  AppModeKey,
+  ContentEntity,
+  ContentLink,
+  ContentNote,
+  ContentRelation,
+  ModeContentMapping,
+} from "@shared/types/portfolio";
 
 export type ActorCapability =
   | "inspectable"
@@ -38,11 +45,19 @@ export type ActorContentCollection =
   | "projects"
   | "skills"
   | "experience"
+  | "story-fragments"
   | "contact-links"
   | "story-hints"
   | "relations"
   | "mode-mappings"
   | "notes";
+
+export type ActorContentValue =
+  | ContentEntity
+  | ContentRelation
+  | ModeContentMapping
+  | ContentNote
+  | ContentLink;
 
 export type ActorContentRole = "primary" | "secondary" | "hint" | "unlock" | "related";
 
@@ -138,7 +153,7 @@ export interface ResolvedActorGate extends ActorGateDefinition {
 
 export interface ResolvedActorContentLink extends ActorContentLinkDefinition {
   found: boolean;
-  value?: unknown;
+  value?: ActorContentValue;
 }
 
 export interface ResolvedActorDefinition {

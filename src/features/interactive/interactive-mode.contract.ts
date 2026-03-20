@@ -5,11 +5,11 @@ export const interactiveModeDefinition: ModeDefinition = {
   label: "Interactive Mode",
   routeBase: "/interactive",
   ownership: {
-    primary: ["scene", "room-navigation", "project-hotspots", "pc-overlay"],
-    sharedDependencies: ["portfolio-content", "shared-ui", "app-shell"],
+    primary: ["scene", "phaser-room-renderer", "project-hotspots", "reaction-surfaces"],
+    sharedDependencies: ["portfolio-content", "app-shell"],
   },
   extensionPoints: [
-    "2d-scene-renderer",
+    "phaser-scene-renderer",
     "object-interactions",
     "project-detail-popups",
     "room-audio-and-ambience",
@@ -17,8 +17,8 @@ export const interactiveModeDefinition: ModeDefinition = {
   contentMappingId: "interactive-shared-foundation",
   checklist: [
     {
-      id: "interactive-react-adapter",
-      label: "React runtime adapter stays mounted through the shared registry.",
+      id: "interactive-runtime-mount",
+      label: "React only mounts the runtime; Phaser owns the interactive presentation.",
       status: "done",
     },
     {
@@ -27,19 +27,19 @@ export const interactiveModeDefinition: ModeDefinition = {
       status: "done",
     },
     {
-      id: "interactive-shared-ui-shells",
-      label: "Shared UI shells cover panels, triggers, dialogs and hints without owning scene behavior.",
+      id: "interactive-phaser-scene",
+      label: "Scene, hotspots, and detail overlays render inside Phaser from resolved feature state.",
       status: "done",
     },
     {
       id: "interactive-renderer-adapter",
-      label: "Connect the resolved scene model to the final renderer adapter.",
-      status: "todo",
+      label: "Keep the Phaser scene thin and fed by shared actor and scene contracts.",
+      status: "done",
     },
     {
       id: "interactive-project-overlays",
-      label: "Build project overlay presentation on top of the shared shells without coupling it to the renderer.",
-      status: "todo",
+      label: "Project overlay presentation stays data-driven even though it now renders in Phaser.",
+      status: "done",
     },
   ],
 };

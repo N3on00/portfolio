@@ -1,8 +1,12 @@
-import type { ContentEntity, PortfolioContent } from "@shared/types/portfolio";
+import type {
+  ContentEntity,
+  PortfolioContent,
+} from "@shared/types/portfolio";
 import type {
   ActorActionDefinition,
   ActorActionRequirement,
   ActorContentCollection,
+  ActorContentValue,
   ActorContentLinkDefinition,
   ActorDefinition,
   ActorGateDefinition,
@@ -21,27 +25,39 @@ const toContentKey = (collection: ActorContentCollection, contentId: string): st
 const isKind = <TKind extends ContentEntity["kind"]>(kind: TKind) =>
   (entity: ContentEntity): entity is Extract<ContentEntity, { kind: TKind }> => entity.kind === kind;
 
-export const createPortfolioContentIndex = (content: PortfolioContent): Map<string, unknown> => {
-  const index = new Map<string, unknown>();
+const indexById = <TValue extends ActorContentValue & { id: string }>(
+  index: Map<string, ActorContentValue>,
+  collection: ActorContentCollection,
+  values: TValue[],
+) => {
+  values.forEach((value) => index.set(toContentKey(collection, value.id), value));
+};
+
+export const createPortfolioContentIndex = (content: PortfolioContent): Map<string, ActorContentValue> => {
+  const index = new Map<string, ActorContentValue>();
   const rootPortfolio = content.entities.find((entity) => entity.id === content.rootPortfolioId);
 
   if (rootPortfolio) {
     index.set(toContentKey("identity", rootPortfolio.id), rootPortfolio);
   }
 
-  content.entities.filter(isKind("project")).forEach((project) => index.set(toContentKey("projects", project.id), project));
-  content.entities.filter(isKind("skill")).forEach((skill) => index.set(toContentKey("skills", skill.id), skill));
-  content.entities.filter(isKind("experience")).forEach((entry) => index.set(toContentKey("experience", entry.id), entry));
-  content.entities.filter(isKind("story-hint")).forEach((hint) => index.set(toContentKey("story-hints", hint.id), hint));
-  content.notes.forEach((note) => index.set(toContentKey("notes", note.id), note));
-  rootPortfolio?.links?.forEach((link) => index.set(toContentKey("contact-links", link.id), link));
+  indexById(index, "entities", content.entities);
+  indexById(index, "projects", content.entities.filter(isKind("project")));
+  indexById(index, "skills", content.entities.filter(isKind("skill")));
+  indexById(index, "experience", content.entities.filter(isKind("experience")));
+  indexById(index, "story-fragments", content.entities.filter(isKind("story-fragment")));
+  indexById(index, "story-hints", content.entities.filter(isKind("story-hint")));
+  indexById(index, "relations", content.relations);
+  indexById(index, "mode-mappings", content.modeMappings);
+  indexById(index, "notes", content.notes);
+  indexById(index, "contact-links", rootPortfolio?.links ?? []);
 
   return index;
 };
 
 const resolveContentLink = (
   link: ActorContentLinkDefinition,
-  contentIndex: Map<string, unknown>,
+  contentIndex: Map<string, ActorContentValue>,
 ): ResolvedActorContentLink => {
   const value = contentIndex.get(toContentKey(link.collection, link.contentId));
 
@@ -142,6 +158,7 @@ export interface ResolveActorOptions {
   registry: ActorRegistry;
   stateStore: ActorStateStore;
   content: PortfolioContent;
+  contentIndex?: Map<string, ActorContentValue>;
 }
 
 export const resolveActorDefinition = ({
@@ -149,13 +166,14 @@ export const resolveActorDefinition = ({
   registry,
   stateStore,
   content,
+  contentIndex,
 }: ResolveActorOptions): ResolvedActorDefinition => {
   const actor: ActorDefinition = registry.requireActor(actorId);
   const state = stateStore.ensure(actor);
-  const contentIndex = createPortfolioContentIndex(content);
+  const resolvedContentIndex = contentIndex ?? createPortfolioContentIndex(content);
   const gates = (actor.gates ?? []).map((gate) => resolveGate(gate, registry, stateStore));
   const actions = actor.actions.map((action) => resolveAction(action, state, gates));
-  const contentLinks = (actor.contentLinks ?? []).map((link) => resolveContentLink(link, contentIndex));
+  const contentLinks = (actor.contentLinks ?? []).map((link) => resolveContentLink(link, resolvedContentIndex));
 
   return {
     actor,

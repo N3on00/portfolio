@@ -1,4 +1,4 @@
-import { createActorStateStore, resolveActorDefinition } from "@shared/actors";
+import { createActorStateStore, createPortfolioContentIndex, resolveActorDefinition } from "@shared/actors";
 import type { ActorStateStore } from "@shared/actors";
 import { portfolioContent } from "@shared/content/portfolio-content";
 import { interactiveActorDefinitions, interactiveActorRegistry } from "./actor-registry";
@@ -37,6 +37,7 @@ export function resolveSceneWithState(
   scene: InteractiveSceneDefinition,
   stateStore: ActorStateStore,
 ): ResolvedSceneDefinition {
+  const contentIndex = createPortfolioContentIndex(portfolioContent);
 
   const actors: ResolvedSceneActor[] = scene.actors.map((placement) => {
     const actor = interactiveActorRegistry.requireActor(placement.actorId);
@@ -45,6 +46,7 @@ export function resolveSceneWithState(
       registry: interactiveActorRegistry,
       stateStore,
       content: portfolioContent,
+      contentIndex,
     });
 
     return {

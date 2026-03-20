@@ -1,9 +1,11 @@
 import type {
+  ActorContentValue,
   ActorActionKind,
   ActorDefinition,
   ResolvedActorContentLink,
   ResolvedActorDefinition,
 } from "@shared/actors";
+import type { ContentEntity, ContentLink, ContentNote, ContentRelation, ModeContentMapping } from "@shared/types/portfolio";
 
 export type SceneId = string;
 export type SceneActorId = string;
@@ -144,39 +146,106 @@ export interface SceneOverlayContent {
   cards: SceneContentCard[];
 }
 
+function isContentEntity(value: ActorContentValue): value is ContentEntity {
+  return "kind" in value;
+}
+
+function isContentRelation(value: ActorContentValue): value is ContentRelation {
+  return "sourceId" in value && "targetId" in value;
+}
+
+function isModeContentMapping(value: ActorContentValue): value is ModeContentMapping {
+  return "mode" in value && "surfaces" in value;
+}
+
+function isContentNote(value: ActorContentValue): value is ContentNote {
+  return "text" in value;
+}
+
+function isContentLink(value: ActorContentValue): value is ContentLink {
+  return "url" in value && "label" in value;
+}
+
+function toCardTitle(value: ActorContentValue, fallbackTitle: string): string {
+  if (isContentEntity(value)) {
+    return value.title;
+  }
+
+  if (isContentLink(value)) {
+    return value.label;
+  }
+
+  if (isModeContentMapping(value)) {
+    return value.id;
+  }
+
+  if (isContentRelation(value)) {
+    return value.id;
+  }
+
+  if (isContentNote(value)) {
+    return fallbackTitle;
+  }
+
+  return fallbackTitle;
+}
+
+function toCardBody(value: ActorContentValue, fallbackTitle: string): string {
+  if (isContentEntity(value)) {
+    return value.summary;
+  }
+
+  if (isContentLink(value)) {
+    return value.url;
+  }
+
+  if (isContentNote(value)) {
+    return value.text;
+  }
+
+  if (isModeContentMapping(value)) {
+    return `${value.mode} mode with ${value.surfaces.length} mapped surfaces.`;
+  }
+
+  if (isContentRelation(value)) {
+    return value.note ?? `${value.type} relation between ${value.sourceId} and ${value.targetId}.`;
+  }
+
+  return fallbackTitle;
+}
+
+function toCardTags(value: ActorContentValue): string[] {
+  if (isContentEntity(value)) {
+    return value.tags;
+  }
+
+  if (isModeContentMapping(value)) {
+    return [value.mode];
+  }
+
+  if (isContentRelation(value)) {
+    return [value.type, value.strength];
+  }
+
+  return [];
+}
+
 export function toSceneContentCards(
   links: ResolvedActorContentLink[],
   fallbackTitle: string,
 ): SceneContentCard[] {
   return links.flatMap((link) => {
-    if (!link.found || !link.value || typeof link.value !== "object") {
+    if (!link.found || !link.value) {
       return [];
     }
-
-    const value = link.value as Record<string, unknown>;
-    const title = typeof value.title === "string" ? value.title : fallbackTitle;
-    const body =
-      typeof value.summary === "string"
-        ? value.summary
-        : typeof value.text === "string"
-          ? value.text
-          : typeof value.label === "string"
-            ? value.label
-            : fallbackTitle;
-    const eyebrow = link.collection;
-    const tags = Array.isArray(value.tags)
-      ? value.tags.filter((entry): entry is string => typeof entry === "string")
-      : typeof value.category === "string"
-        ? [value.category]
-        : [];
 
     return [
       {
         id: link.id,
-        title,
-        eyebrow,
-        body,
-        tags,
+        title: toCardTitle(link.value, fallbackTitle),
+        eyebrow: link.collection,
+        body: toCardBody(link.value, fallbackTitle),
+        tags: toCardTags(link.value),
       },
     ];
   });

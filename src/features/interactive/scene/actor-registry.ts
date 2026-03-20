@@ -1,5 +1,5 @@
 import { createActorRegistry } from "@shared/actors";
-import type { ActorDefinition, ActorPlacement } from "@shared/actors";
+import type { ActorDefinition } from "@shared/actors";
 
 export const interactiveActorDefinitions: ActorDefinition[] = [
   {
@@ -68,7 +68,7 @@ export const interactiveActorDefinitions: ActorDefinition[] = [
     ],
     contentLinks: [
       { id: "wheel-skill-full-stack", collection: "skills", contentId: "skill-full-stack", role: "primary" },
-      { id: "wheel-story-builder", collection: "story-hints", contentId: "story-builder", role: "secondary" },
+      { id: "wheel-story-builder", collection: "story-fragments", contentId: "story-builder", role: "secondary" },
     ],
     metadata: {
       rendererKey: "racing-wheel",
@@ -96,7 +96,7 @@ export const interactiveActorDefinitions: ActorDefinition[] = [
     contentLinks: [
       { id: "vr-skill-frontend", collection: "skills", contentId: "skill-frontend-vue", role: "secondary" },
       { id: "vr-skill-architecture", collection: "skills", contentId: "skill-architecture-docs", role: "secondary" },
-      { id: "vr-story-architecture", collection: "story-hints", contentId: "story-architecture", role: "primary" },
+      { id: "vr-story-architecture", collection: "story-fragments", contentId: "story-architecture", role: "primary" },
     ],
     metadata: {
       rendererKey: "vr-headset",
@@ -123,7 +123,7 @@ export const interactiveActorDefinitions: ActorDefinition[] = [
     ],
     contentLinks: [
       { id: "headset-contact-github", collection: "contact-links", contentId: "github-profile", role: "primary" },
-      { id: "headset-story-builder", collection: "story-hints", contentId: "story-builder", role: "secondary" },
+      { id: "headset-story-builder", collection: "story-fragments", contentId: "story-builder", role: "secondary" },
     ],
     metadata: {
       rendererKey: "desk-headset",
@@ -203,7 +203,7 @@ export const interactiveActorDefinitions: ActorDefinition[] = [
       },
     ],
     contentLinks: [
-      { id: "postits-story-docs", collection: "story-hints", contentId: "story-documentation", role: "primary" },
+      { id: "postits-story-docs", collection: "story-fragments", contentId: "story-documentation", role: "primary" },
       { id: "postits-check-map", collection: "story-hints", contentId: "hint-check-map", role: "secondary" },
     ],
     metadata: {
@@ -231,7 +231,7 @@ export const interactiveActorDefinitions: ActorDefinition[] = [
     ],
     contentLinks: [
       { id: "personal-identity", collection: "identity", contentId: "portfolio-patrik-egger", role: "primary" },
-      { id: "personal-story-builder", collection: "story-hints", contentId: "story-builder", role: "secondary" },
+      { id: "personal-story-builder", collection: "story-fragments", contentId: "story-builder", role: "secondary" },
     ],
     metadata: {
       rendererKey: "personal-hints",
@@ -239,9 +239,5 @@ export const interactiveActorDefinitions: ActorDefinition[] = [
     },
   },
 ];
-
-export const interactiveScenePlacements: ActorPlacement[] = interactiveActorDefinitions.flatMap(
-  (actor) => actor.placements,
-);
 
 export const interactiveActorRegistry = createActorRegistry(interactiveActorDefinitions);

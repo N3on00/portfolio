@@ -60,147 +60,22 @@ select {
   width: fit-content;
 }
 
-.interactive-room {
-  position: relative;
-  overflow: hidden;
+.interactive-phaser-stage {
+  width: 100%;
+  min-height: 44rem;
   border: 1px solid var(--color-border, #d8d2c8);
   border-radius: var(--radius-lg, 1.5rem);
+  overflow: hidden;
   background:
-    linear-gradient(180deg, rgba(255, 253, 248, 0.96) 0%, rgba(240, 234, 223, 0.98) 100%),
-    radial-gradient(circle at top left, rgba(138, 106, 47, 0.12), transparent 35%);
+    radial-gradient(circle at top left, rgba(216, 195, 154, 0.24), transparent 32%),
+    linear-gradient(180deg, rgba(255, 252, 247, 0.96) 0%, rgba(242, 237, 227, 0.98) 100%);
+  box-shadow: 0 1.4rem 3rem rgba(17, 17, 17, 0.08);
 }
 
-.interactive-room__backdrop {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.interactive-room__glow {
-  position: absolute;
-  border-radius: 999px;
-  filter: blur(40px);
-  opacity: 0.35;
-}
-
-.interactive-room__glow--left {
-  left: 8%;
-  top: 12%;
-  width: 20%;
-  height: 24%;
-  background: rgba(216, 195, 154, 0.9);
-}
-
-.interactive-room__glow--right {
-  right: 10%;
-  bottom: 14%;
-  width: 24%;
-  height: 28%;
-  background: rgba(138, 106, 47, 0.18);
-}
-
-.interactive-room__canvas {
-  position: relative;
-  min-height: 36rem;
-  padding: var(--space-lg, 1.5rem);
-}
-
-.interactive-room__object {
-  position: absolute;
-  min-width: 7rem;
-  min-height: 5rem;
-  opacity: 0.45;
-  transition: transform 150ms ease, opacity 150ms ease;
-}
-
-.interactive-room__object.is-visible {
-  opacity: 1;
-}
-
-.interactive-room__object.is-focused {
-  transform: translateY(-0.25rem);
-}
-
-.interactive-room__object-card {
-  display: grid;
-  gap: var(--space-2xs, 0.125rem);
-  height: 100%;
-  padding: var(--space-sm, 0.5rem);
-  border: 1px solid rgba(17, 17, 17, 0.1);
-  border-radius: var(--radius-md, 1rem);
-  background: rgba(255, 255, 255, 0.78);
-  box-shadow: 0 1rem 2rem rgba(17, 17, 17, 0.08);
-}
-
-.interactive-room__hotspot {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-}
-
-.interactive-room__hotspot-ring {
+.interactive-phaser-stage canvas {
+  display: block;
   width: 100%;
   height: 100%;
-  border: 2px solid var(--color-accent, #8a6a2f);
-  border-radius: var(--radius-md, 1rem);
-  box-shadow: 0 0 0 0 rgba(138, 106, 47, 0.35);
-  animation: interactive-pulse 1.8s ease-out infinite;
-}
-
-.interactive-room__hint {
-  position: absolute;
-  left: 0;
-  bottom: calc(100% + var(--space-xs, 0.25rem));
-  max-width: 12rem;
-  padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
-  border-radius: var(--radius-pill, 999px);
-  background: rgba(17, 17, 17, 0.82);
-  color: #fff;
-}
-
-.interactive-room__target-row {
-  padding: var(--space-xs, 0.25rem) 0;
-  border-top: 1px solid var(--color-border, #d8d2c8);
-}
-
-.interactive-room__target-row:first-child {
-  padding-top: 0;
-  border-top: 0;
-}
-
-.interactive-room__tag {
-  padding: 0.15rem 0.55rem;
-  border: 1px solid var(--color-border, #d8d2c8);
-  border-radius: var(--radius-pill, 999px);
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.interactive-room__detail-surface {
-  margin-top: var(--space-md, 1rem);
-}
-
-.interactive-reaction.is-project-overlay .ui-panel,
-.interactive-reaction.is-experience-panel .ui-panel {
-  border-color: rgba(138, 106, 47, 0.35);
-}
-
-.interactive-reaction.is-story-panel .ui-panel,
-.interactive-reaction.is-mindset-panel .ui-panel {
-  background: rgba(240, 234, 223, 0.92);
-}
-
-.interactive-reaction.is-contact-panel .ui-panel,
-.interactive-reaction.is-identity-panel .ui-panel {
-  background: rgba(255, 255, 255, 0.94);
-}
-
-.interactive-reaction__inline-hint {
-  background: rgba(216, 195, 154, 0.48);
 }
 
 .classic-react-section {
@@ -244,23 +119,6 @@ select {
   gap: var(--space-xs, 0.25rem);
 }
 
-@keyframes interactive-pulse {
-  0% {
-    transform: scale(0.96);
-    box-shadow: 0 0 0 0 rgba(138, 106, 47, 0.32);
-  }
-
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0.6rem rgba(138, 106, 47, 0);
-  }
-
-  100% {
-    transform: scale(0.98);
-    box-shadow: 0 0 0 0 rgba(138, 106, 47, 0);
-  }
-}
-
 @media (max-width: 720px) {
   .app-shell {
     padding: var(--space-md, 1rem);
@@ -275,12 +133,7 @@ select {
     justify-content: flex-start;
   }
 
-  .interactive-room__canvas {
-    min-height: 30rem;
-  }
-
-  .interactive-room__object {
-    min-width: 5.5rem;
-    min-height: 4.5rem;
+  .interactive-phaser-stage {
+    min-height: 34rem;
   }
 }

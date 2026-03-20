@@ -1,4 +1,4 @@
-import { createActorStateStore, resolveActorDefinition } from "@shared/actors";
+import { createActorStateStore, createPortfolioContentIndex, resolveActorDefinition } from "@shared/actors";
 import { getPortfolioModeMapping, resolvePortfolioSurface } from "@shared/content/portfolio-graph";
 import type {
   ContentEntity,
@@ -39,6 +39,7 @@ export const createClassicRenderDocument = (content: PortfolioContent): ClassicR
   }
 
   const stateStore = createActorStateStore(classicSectionActors);
+  const contentIndex = createPortfolioContentIndex(content);
 
   const sections = classicSectionRegistry
     .slice()
@@ -50,6 +51,7 @@ export const createClassicRenderDocument = (content: PortfolioContent): ClassicR
         registry: classicSectionActorRegistry,
         stateStore,
         content,
+        contentIndex,
       });
       const surface = getRequiredSurface(classicMapping.surfaces, sectionDefinition.surfaceId);
       const resolvedSurface = resolvePortfolioSurface(content, surface);

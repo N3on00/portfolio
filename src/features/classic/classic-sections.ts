@@ -7,7 +7,6 @@ export interface ClassicSectionDefinition {
   actorId: string;
   order: number;
   scanPriority: "primary" | "secondary" | "supporting";
-  contentKey: "projects" | "skills" | "experience" | "contact";
 }
 
 export const classicSectionRegistry: ClassicSectionDefinition[] = [
@@ -20,7 +19,6 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     actorId: "classic-section-hero",
     order: 1,
     scanPriority: "primary",
-    contentKey: "contact",
   },
   {
     id: "about",
@@ -31,7 +29,6 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     actorId: "classic-section-about",
     order: 5,
     scanPriority: "secondary",
-    contentKey: "contact",
   },
   {
     id: "projects",
@@ -42,7 +39,6 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     actorId: "classic-section-projects",
     order: 2,
     scanPriority: "primary",
-    contentKey: "projects",
   },
   {
     id: "skills",
@@ -53,7 +49,6 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     actorId: "classic-section-skills",
     order: 3,
     scanPriority: "primary",
-    contentKey: "skills",
   },
   {
     id: "experience",
@@ -64,7 +59,6 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     actorId: "classic-section-experience",
     order: 4,
     scanPriority: "secondary",
-    contentKey: "experience",
   },
   {
     id: "references",
@@ -75,7 +69,6 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     actorId: "classic-section-references",
     order: 6,
     scanPriority: "supporting",
-    contentKey: "contact",
   },
   {
     id: "contact",
@@ -86,7 +79,6 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     actorId: "classic-section-contact",
     order: 7,
     scanPriority: "secondary",
-    contentKey: "contact",
   },
   {
     id: "cta",
@@ -97,6 +89,5 @@ export const classicSectionRegistry: ClassicSectionDefinition[] = [
     actorId: "classic-section-cta",
     order: 8,
     scanPriority: "supporting",
-    contentKey: "contact",
   },
 ];

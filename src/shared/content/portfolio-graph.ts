@@ -17,10 +17,15 @@ export const createPortfolioRelationIndex = (
 ): Map<string, ContentRelation[]> => {
   const relationIndex = new Map<string, ContentRelation[]>();
 
-  content.relations.forEach((relation) => {
-    const current = relationIndex.get(relation.sourceId) ?? [];
+  const indexRelation = (entityId: string, relation: ContentRelation) => {
+    const current = relationIndex.get(entityId) ?? [];
     current.push(relation);
-    relationIndex.set(relation.sourceId, current);
+    relationIndex.set(entityId, current);
+  };
+
+  content.relations.forEach((relation) => {
+    indexRelation(relation.sourceId, relation);
+    indexRelation(relation.targetId, relation);
   });
 
   return relationIndex;
@@ -65,8 +70,10 @@ export const resolvePortfolioSurface = (
       .forEach((relation) => {
         resolvedRelations.set(relation.id, relation);
 
-        if (!visitedEntities.has(relation.targetId)) {
-          queue.push(relation.targetId);
+        const relatedEntityId = relation.sourceId === entityId ? relation.targetId : relation.sourceId;
+
+        if (!visitedEntities.has(relatedEntityId)) {
+          queue.push(relatedEntityId);
         }
       });
   }
