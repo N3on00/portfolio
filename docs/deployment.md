@@ -26,6 +26,38 @@ Server-side layout:
 4. Ensure the Caddy host entry for `portfolio.pegger.dev` exists
 5. Reload or restart the proxy so the mounted config is active
 
+## GitHub Actions
+
+The repository now supports automated deployment from `main` through `.github/workflows/deploy.yml`.
+
+The workflow:
+
+1. checks out the repository
+2. installs dependencies with `npm ci`
+3. writes the SSH key from GitHub Secrets to a temporary file
+4. runs `scripts/deploy-portfolio.sh`
+
+## Required GitHub Secrets
+
+Create these repository secrets:
+
+- `DEPLOY_SSH_KEY`: private key that can SSH into the production server
+- `DEPLOY_HOST`: production host, currently `89.167.118.25`
+- `DEPLOY_USER`: SSH user, currently `root`
+- `DEPLOY_PORT`: SSH port, usually `22`
+- `DEPLOY_APP_DIR`: deploy target, currently `/opt/portfolio`
+- `DEPLOY_CADDYFILE_PATH`: current proxy config path, `/opt/spotonsight/infrastructure/caddy/Caddyfile`
+
+Recommended repository variable or secret values for the current setup:
+
+```text
+DEPLOY_HOST=89.167.118.25
+DEPLOY_USER=root
+DEPLOY_PORT=22
+DEPLOY_APP_DIR=/opt/portfolio
+DEPLOY_CADDYFILE_PATH=/opt/spotonsight/infrastructure/caddy/Caddyfile
+```
+
 ## Notes from the current setup
 
 - The target server already runs the shared reverse proxy container `spotonsight-proxy-1`

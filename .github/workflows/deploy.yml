@@ -1,0 +1,42 @@
+name: Deploy Portfolio
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare SSH key
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/portfolio_deploy_key
+          chmod 600 ~/.ssh/portfolio_deploy_key
+
+      - name: Deploy to production server
+        env:
+          SSH_KEY_PATH: ~/.ssh/portfolio_deploy_key
+          REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
+          REMOTE_USER: ${{ secrets.DEPLOY_USER }}
+          REMOTE_PORT: ${{ secrets.DEPLOY_PORT }}
+          REMOTE_DIR: ${{ secrets.DEPLOY_APP_DIR }}
+          CADDYFILE_PATH: ${{ secrets.DEPLOY_CADDYFILE_PATH }}
+        run: bash ./scripts/deploy-portfolio.sh
